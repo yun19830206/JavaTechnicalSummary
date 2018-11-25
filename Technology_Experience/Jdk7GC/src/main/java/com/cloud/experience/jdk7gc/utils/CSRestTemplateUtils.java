@@ -54,7 +54,7 @@ public class CSRestTemplateUtils {
 
         //http get方式请求，请求参数只支持Map<String,简单数据类型>
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(requestUrl);
-        if(null != request && request instanceof Map){
+        if(request instanceof Map){
             Map<String,?> paramMap = (Map<String,?>)request;
             if(paramMap.size()>0){
                 for(Map.Entry<String,?> param : paramMap.entrySet()){

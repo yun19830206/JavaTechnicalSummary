@@ -19,8 +19,9 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class BusinessService {
 
+
     /** 模拟不会被YouneGC回收的对象 */
-    private ConcurrentHashMap<String,Object> canotBeRecoveryByYoungGC = new ConcurrentHashMap(8005);
+    private ConcurrentHashMap<String,Object> canotBeRecoveryByYoungGC = new ConcurrentHashMap<>(8005);
 
     private AtomicLong mapKey = new AtomicLong();
 
@@ -29,26 +30,30 @@ public class BusinessService {
 
     /** 模拟业务操作 */
     public void doBusiness(){
-        for(int i =0 ; i< 10; i++){
+
+        // 模拟垃圾回收需要的魔法值
+        int businessTime = 10;
+        int usedTimeBusinessTime = 1000 ;
+        int maxMapKeyCount = 4500 ;
+
+        for(int i =0 ; i< businessTime; i++){
             String keyString = CSStringUtils.connectString(mapKey.incrementAndGet(),"个Key");
-            canotBeRecoveryByYoungGC.put(keyString,new byte[1024*1024*1]);
+            canotBeRecoveryByYoungGC.put(keyString,new byte[1024*1024]);
         }
-        //log.info("执行完成一次业务调用，现在Map的大小是："+canotBeRecoveryByYoungGC.size());
-        for(int i =0 ; i< 1000; i++){
-            String keyString = CSStringUtils.connectString(i,"个Key");
+        for(int i =0 ; i< usedTimeBusinessTime; i++){
+            CSStringUtils.connectString(i,"个Key");
         }
         //如果数量大于4500个了(也就是4.5G大小了)，切换canotBeRecoveryByYoungGC，这样老的canotBeRecoveryByYoungGC就会被FullGC回收
-        if(canotBeRecoveryByYoungGC.size()>=4500){
-            if(lock.tryLock()){
-                try{
-                    canotBeRecoveryByYoungGC = new ConcurrentHashMap(8005);
-                    log.info("将要做一次FullGC");
-                }catch (Exception e){
-
-                }finally {
-                    lock.unlock();
-                }
+        if (canotBeRecoveryByYoungGC.size() >= maxMapKeyCount && lock.tryLock()) {
+            try {
+                canotBeRecoveryByYoungGC = new ConcurrentHashMap<>(8005);
+                log.info("将要做一次FullGC");
+            } catch (Exception e) {
+                log.error("切换ConcurrentHashMap错误："+e.getMessage());
+            } finally {
+                lock.unlock();
             }
+
         }
 
     }
