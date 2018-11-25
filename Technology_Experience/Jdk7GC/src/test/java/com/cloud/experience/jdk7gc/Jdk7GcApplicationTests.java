@@ -116,6 +116,10 @@ public class Jdk7GcApplicationTests {
 
 	}
 
+
+	/**
+	 * Http请求返回结果POJO
+	 */
 	class HttpRequestResult{
 		/**  Http请求时间戳 */
 		private long startTimeMilles ;
