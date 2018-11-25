@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
+ * JDK8默认GC 与 CMS类型GC在WebApp中接口性能差异验证程序主入口
  * @author Cloud
  */
 @SpringBootApplication
