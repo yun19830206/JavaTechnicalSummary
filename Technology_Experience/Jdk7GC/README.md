@@ -29,7 +29,7 @@
     * UseParallelOldGC 表示 "Parallel Scavenge" + "Parallel Old"组合
 *  在实践中使用UseConcMarkSweepGC 表示 "ParNew" + "CMS" 的组合是经常使用的
 
-# JDK8不用启动方式默认启用的GC介绍
+# JDK8不同启动方式默认启用的GC介绍
   * JDK8默认启动参数：-Xms2048M -Xmx2048M -XX:+PrintGC -Xloggc:/log/Jdk7GC.GCDeatil.log
     * 垃圾回收器的名称：Parallel Scavenge (PS Scavenge)(新生代)
     * 垃圾回收器的名称：Parallel Old (PS MarkSweep) (老年代)
@@ -116,7 +116,7 @@
   * 打开jmxremote.password文件，去掉 # monitorRole  QED 和 # controlRole  R&D 这两行前面的注释符号
   * 编辑文件，命令:vim /etc/profile, 在最后增加如下内容(注意IP地址必须是外网能访问的地址，并非内网地址)
   ```
-    export JAVA_OPTS='-Djava.rmi.server.hostname=52.80.157.151 -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9001 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false'
+    export JAVA_OPTS='-Djava.rmi.server.hostname=52.80.111.111 -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9001 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false'
   ```
   * 应用最新配置信息，命令:source /etc/profile
   * 启动服务：nohup java $JAVA_OPTS -Xms6144M -Xmx6144M -XX:+PrintGC -Xloggc:/log/Jdk8GC.GCDeatil.log -jar jdk7gc-0.0.1-SNAPSHOT.jar > jdk8gclog.file 2>&1 &  
