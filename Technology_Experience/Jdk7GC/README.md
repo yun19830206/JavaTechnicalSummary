@@ -125,12 +125,3 @@
   * 参考《https://blog.csdn.net/u011391839/article/details/76984995》《https://blog.csdn.net/luosai19910103/article/details/75574725》
 
 
-
-
-
-# 剩余什么没有做
-  1. 模拟业务的RestController  ---OK
-  2. AWS中安装JDK8，启动服务可远程JvisualVM   ---OK
-  3. JMeter的并发效果   ---OK
-  3. 客户端发并发请求，并记录响应时间大于500MS的请求   没做
-  
