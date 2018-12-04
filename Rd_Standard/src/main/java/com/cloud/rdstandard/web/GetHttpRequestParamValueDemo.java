@@ -49,7 +49,7 @@ public class GetHttpRequestParamValueDemo {
     }
 
     /**
-     * 将请求参数以单个键作为请求接口的入参，也是较为传统的方法，无法到达高效开发的目的:</br>
+     * 将请求Key作为接口入参方式，也是较为传统的方法，无法到达高效开发的目的:</br>
      *  get方式可以获得参数的值
      *  post方式(Content-Type: application/x-www-form-urlencoded)可以获得参数的值
      *  post方式(Content-Type: multipart/form-data)可以获得参数的值
