@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.aiassistant.formdesign.dao.FormDataMapper" >
+
+    <select id="selectFormDataByFormDataQueryDTO" resultType="java.util.Map" parameterType="com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO">
+        select
+            *
+        from ${tableName}
+        where
+            ((create_user = ${userId})
+             or
+             (
+                 exists(select 1 from pub_auth_form_data b where b.from_table=1 and crm_customer.create_user=b.from_user and b.to_user=${userId})
+             ))
+        order by id DESC
+    </select>
+
+</mapper>

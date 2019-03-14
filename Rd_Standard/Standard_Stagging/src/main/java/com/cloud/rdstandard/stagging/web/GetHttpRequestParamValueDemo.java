@@ -1,7 +1,8 @@
-package com.cloud.rdstandard.web;
+package com.cloud.rdstandard.stagging.web;
 
-import com.cloud.rdstandard.pojo.ApiResponse;
-import com.cloud.rdstandard.pojo.User;
+
+import com.cloud.rdstandard.stagging.pojo.AjaxResponse;
+import com.cloud.rdstandard.stagging.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,12 +41,12 @@ public class GetHttpRequestParamValueDemo {
      *  post方式(Content-Type: application/json)无法获得参数的值
      */
     @RequestMapping("/addUserByServletRequest")
-    public ApiResponse addUserByServletRequest(HttpServletRequest request){
+    public AjaxResponse addUserByServletRequest(HttpServletRequest request){
         User user = new User();
         user.setName(request.getParameter("name"));
         user.setAge(Integer.parseInt(request.getParameter("age")));
         log.debug(logSintring+user);
-        return new ApiResponse.ApiResponseBuilder().data(user).build();
+        return AjaxResponse.success(user);
     }
 
     /**
@@ -56,12 +57,12 @@ public class GetHttpRequestParamValueDemo {
      *  post方式(Content-Type: application/json)无法获得参数的值，报错："Optional int parameter '**' is present but cannot be translated into a null value due to being declared as a primitive type. Consider declaring it as object wrapper for the corresponding primitive type."
      */
     @RequestMapping("/addUserByKeyByKey")
-    public ApiResponse addUserByKeyByKey(String name, int age){
+    public AjaxResponse addUserByKeyByKey(String name, int age){
         User user = new User();
         user.setName(name);
         user.setAge(age);
         log.debug(logSintring+user);
-        return new ApiResponse.ApiResponseBuilder().data(user).build();
+        return AjaxResponse.success(user);
     }
 
     /**
@@ -72,9 +73,9 @@ public class GetHttpRequestParamValueDemo {
      *  post方式(Content-Type: application/json)无法获得参数的值。这种方式必须使用@RequestBody注解在入参当中。
      */
     @RequestMapping("/addUserByBean")
-    public ApiResponse addUserByBean(User user){
+    public AjaxResponse addUserByBean(User user){
         log.debug(logSintring+user);
-        return new ApiResponse.ApiResponseBuilder().data(user).build();
+        return AjaxResponse.success(user);
     }
 
     /**
@@ -85,9 +86,9 @@ public class GetHttpRequestParamValueDemo {
      *  post方式(Content-Type: application/json)可以获得参数的值
      */
     @RequestMapping("/addUserByBeanUseRequestBody")
-    public ApiResponse addUserByBeanUseRequestBody(@RequestBody User user){
+    public AjaxResponse addUserByBeanUseRequestBody(@RequestBody User user){
         log.debug(logSintring+user.toString());
-        return new ApiResponse.ApiResponseBuilder().data(user).build();
+        return AjaxResponse.success(user);
     }
 
     /**
@@ -96,12 +97,12 @@ public class GetHttpRequestParamValueDemo {
      *  post方式：不管是哪种方式都不支持。 如果post请求的URL路径符合PathVariable也是规则，也是可以获得参数的
      */
     @RequestMapping("/addUserByPathValue/{useName}/{userAge}")
-    public ApiResponse addUserByPathValue(@PathVariable String useName, @PathVariable("userAge") int age){
+    public AjaxResponse addUserByPathValue(@PathVariable String useName, @PathVariable("userAge") int age){
         User user = new User();
         user.setAge(age);
         user.setName(useName);
         log.debug(logSintring+user);
-        return new ApiResponse.ApiResponseBuilder().data(user).build();
+        return AjaxResponse.success(user);
     }
 
     /**
@@ -112,11 +113,11 @@ public class GetHttpRequestParamValueDemo {
      *  post方式(Content-Type: application/json) 不可以。
      */
     @RequestMapping("/addUserByRequestParam")
-    public ApiResponse addUserByRequestParam(@RequestParam("name") String userName,
+    public AjaxResponse addUserByRequestParam(@RequestParam("name") String userName,
                                              @RequestParam(value = "age", required = false, defaultValue = "99") int userAge){
         User user = new User(userName,userAge);
         log.debug(logSintring+user);
-        return new ApiResponse.ApiResponseBuilder().data(user).build();
+        return AjaxResponse.success(user);
     }
 
 }
