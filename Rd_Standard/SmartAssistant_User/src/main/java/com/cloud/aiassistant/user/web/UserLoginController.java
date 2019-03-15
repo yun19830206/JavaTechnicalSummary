@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -40,5 +41,14 @@ public class UserLoginController {
         }else{
             return AjaxResponse.failed(null,"登入失败，请核对用户名与密码");
         }
+    }
+
+    /**
+     * 登出接口
+     */
+    @RequestMapping("/login/userlogout")
+    public AjaxResponse logout(HttpServletRequest request){
+        request.getSession().removeAttribute(User.SESSION_KEY_USER);
+        return AjaxResponse.success();
     }
 }

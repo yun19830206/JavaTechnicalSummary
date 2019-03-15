@@ -1,5 +1,6 @@
 package com.cloud.aiassistant.formdesign.web;
 
+import com.cloud.aiassistant.formdesign.pojo.FormDataJudgeDuplicateQueryDTO;
 import com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO;
 import com.cloud.aiassistant.formdesign.service.FormDataService;
 import com.cloud.aiassistant.pojo.common.AjaxResponse;
@@ -29,18 +30,29 @@ public class FormDataController {
 
     /** 7：[管理端]获得我能查看的表单数据(权限见赋权功能):我创建的 和 赋权给我的:  带分页(配置查询条件暂时不做)   */
     @RequestMapping("/get/myformpagedata")
-    public AjaxResponse<PageResult<List<Map<String,Object>>>> getFormData(@RequestBody PageParam<FormDataQueryDTO> formDataPageParam){
+    public AjaxResponse<PageResult<Map<String,Object>>> getFormData(@RequestBody PageParam<FormDataQueryDTO> formDataPageParam){
         PageResult formDataPageResult = formDataService.getFormDataByFormId(formDataPageParam);
         return AjaxResponse.success(formDataPageResult);
     }
 
     /** 8：[移动PC公用]根据表单设计主键ID，与数据主键ID的List,  获得明细数据。 */
     @RequestMapping("/get/formdatabyid")
-    public AjaxResponse getFormDataByTableIdAndDataIdList(){
-        // formDataService.getFormDataByTableIdAndDataIdList();
-        return AjaxResponse.success("");
+    public AjaxResponse getFormDataByTableIdAndDataIdList(@RequestBody FormDataQueryDTO formDataQueryDTO){
+        List<Map<String, Object>> dataList = formDataService.getFormDataByTableIdAndDataIdList(formDataQueryDTO);
+        return AjaxResponse.success(dataList);
     }
 
+    /** 9：[移动PC公用] 根据FormDataJudgeDuplicateQueryDTO(表单ID，表名，字段名，值),判断数据是否重复 */
+    @RequestMapping("/judge/formdata/duplicate")
+    public AjaxResponse judgeFormColumnDataIsDuplicate(@RequestBody FormDataJudgeDuplicateQueryDTO formDataJudgeDuplicateQueryDTO){
+        //重复返回True，不重复返回False
+        Boolean isDuplicate = formDataService.judgeFormColumnDataIsDuplicate(formDataJudgeDuplicateQueryDTO);
+        if(Boolean.TRUE.equals(isDuplicate)){
+            return AjaxResponse.failed(null,"已经存在["+formDataJudgeDuplicateQueryDTO.getColumnValue()+"]数据");
+        }else{
+            return AjaxResponse.success();
+        }
+    }
 
 }
 

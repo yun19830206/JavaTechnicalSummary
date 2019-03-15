@@ -208,3 +208,23 @@ INSERT INTO crm_customer (chinese_name, industry_drop, employ_number, where_from
   VALUES ('重庆猪八戒网络有限公司', '电商', '1000', '渠道', 'B', '售后客户关系维护', '1', '2019-03-12 17:36:55', '200');
 INSERT INTO crm_customer (chinese_name, industry_drop, employ_number, where_from, customer_level, customer_status, create_user, create_time, tenant_id)
   VALUES ('上海政谱科技有限公司', '政务', '500', '老客续费', 'C', '初步方案', '1', '2019-03-12 17:37:40', '200');
+## 创建联系人表
+create table crm_project_user
+(
+  id                   int(11) not null auto_increment comment '主键ID',
+  compange_name        int(11) not null comment '公司法定名称',
+  user_name            varchar(32) not null comment '姓名',
+  user_sex             varchar(8) not null comment '性别',
+  department           varchar(64) not null comment '部门',
+  position             varchar(32) not null comment '职位',
+  phone_number         varchar(16) not null comment '手机号',
+  qq_wx                varchar(32) not null comment 'QQ微信',
+  address              varchar(64) not null comment '地址',
+  age                  int(4) not null comment '年龄',
+  birthday             datetime not null comment '生日',
+  hobby                varchar(32) not null comment '爱好',
+  create_user          int(11) not null comment '创建人，外键用户表',
+  create_time          datetime not null comment '创建日期(类型对应Java中TimeStamp,JS中相同字符串)',
+  tenant_id            int(11) not null comment '外键租户ID',
+  primary key (id)
+);
