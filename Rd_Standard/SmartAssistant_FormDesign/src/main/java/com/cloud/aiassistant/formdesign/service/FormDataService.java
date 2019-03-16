@@ -3,9 +3,8 @@ package com.cloud.aiassistant.formdesign.service;
 import com.cloud.aiassistant.core.utils.PageHelperUtils;
 import com.cloud.aiassistant.enums.formdesign.TableColumnEnum;
 import com.cloud.aiassistant.formdesign.dao.*;
-import com.cloud.aiassistant.formdesign.pojo.FormDataJudgeDuplicateQueryDTO;
-import com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO;
-import com.cloud.aiassistant.formdesign.pojo.FormDesignVO;
+import com.cloud.aiassistant.formdesign.pojo.*;
+import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.common.PageParam;
 import com.cloud.aiassistant.pojo.common.PageResult;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
@@ -19,10 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * 表单数据 (增、删、改、差)Service
@@ -105,6 +102,59 @@ public class FormDataService {
         }else{
             return Boolean.FALSE;
         }
+    }
+
+    /**
+     * 新增一个表单数据
+     * @param formRowDataDTO 一个表单的一行数据
+     * @return CommonSuccessOrFail
+     */
+    public CommonSuccessOrFail addFormOneRowData(FormRowDataDTO formRowDataDTO) {
+        //1:验证核心参数是否具备
+        if(null == formRowDataDTO || null == formRowDataDTO.getTableId() || formRowDataDTO.getTableId()<1 || null == formRowDataDTO.getColumnValueList()){
+            CommonSuccessOrFail.fail("参数错误");
+        }
+        FormDesignVO formDesignVO = formDesignService.getFormDesignVOById(formRowDataDTO.getTableId());
+        //2:根据表单配置数据类型和值，校验数据合法性
+        CommonSuccessOrFail commonSuccessOrFail = this.validateFormData(formDesignVO,formRowDataDTO);
+        if(CommonSuccessOrFail.CODE_ERROR == commonSuccessOrFail.getResultCode()){
+            return commonSuccessOrFail ;
+        }
+        //3:设置正确的默认属性(创建人、创建时间、租户ID)
+        formRowDataDTO = this.setFormOneRowDataDefaultValue(formRowDataDTO);
+
+        //4:保存数据
+        formDataDao.insertFormOneRowData(formRowDataDTO);
+
+        return CommonSuccessOrFail.success("新增成功");
+    }
+
+    /** 设置正确的默认属性(创建人、创建时间、租户ID)，先移出传入的，再加入默认的 */
+    private FormRowDataDTO setFormOneRowDataDefaultValue(FormRowDataDTO formRowDataDTO) {
+        Iterator<OneColumnValue> iterator = formRowDataDTO.getColumnValueList().iterator();
+        while(iterator.hasNext()) {
+            OneColumnValue oneColumnValue = iterator.next();
+            if (TableColumnConfig.DEFAULT_COLUMN_CREATE_USER.equals(oneColumnValue.getColumnName())) {
+                iterator.remove();
+            }
+            if (TableColumnConfig.DEFAULT_COLUMN_CREATE_TIME.equals(oneColumnValue.getColumnName())) {
+                iterator.remove();
+            }
+            if (TableColumnConfig.DEFAULT_COLUMN_TENANT_ID.equals(oneColumnValue.getColumnName())) {
+                iterator.remove();
+            }
+        }
+        User user=(User) session.getAttribute(User.SESSION_KEY_USER);
+        formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_CREATE_USER,user.getId()+""));
+        formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_CREATE_TIME, new Timestamp(System.currentTimeMillis()).toString()));
+        formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_TENANT_ID,user.getTenantId()+""));
+        return formRowDataDTO;
+    }
+
+    /** 根据表单配置数据类型和值，校验数据合法性 */
+    private CommonSuccessOrFail validateFormData(FormDesignVO formDesignVO, FormRowDataDTO formRowDataDTO) {
+        //TODO
+        return CommonSuccessOrFail.success("数据校验通过。");
     }
 
     /** 根据表单配置、表单字段配置，将 外键引用的字段 扩充展示 引用表的展示字段 */

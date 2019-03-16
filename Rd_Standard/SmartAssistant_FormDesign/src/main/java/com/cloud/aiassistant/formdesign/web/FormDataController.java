@@ -2,8 +2,10 @@ package com.cloud.aiassistant.formdesign.web;
 
 import com.cloud.aiassistant.formdesign.pojo.FormDataJudgeDuplicateQueryDTO;
 import com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO;
+import com.cloud.aiassistant.formdesign.pojo.FormRowDataDTO;
 import com.cloud.aiassistant.formdesign.service.FormDataService;
 import com.cloud.aiassistant.pojo.common.AjaxResponse;
+import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.common.PageParam;
 import com.cloud.aiassistant.pojo.common.PageResult;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +54,18 @@ public class FormDataController {
         }else{
             return AjaxResponse.success();
         }
+    }
+
+    /** 10：[移动PC公用]录入一个表单数据。 */
+    @RequestMapping("/add/formrowdata")
+    public AjaxResponse addFormOneRowData(@RequestBody FormRowDataDTO formRowDataDTO){
+        CommonSuccessOrFail commonSuccessOrFail = formDataService.addFormOneRowData(formRowDataDTO);
+        if(CommonSuccessOrFail.CODE_ERROR == commonSuccessOrFail.getResultCode()){
+            return AjaxResponse.failed(null,commonSuccessOrFail.getResultDesc());
+        }else{
+            return AjaxResponse.success(null,commonSuccessOrFail.getResultDesc());
+        }
+
     }
 
 }

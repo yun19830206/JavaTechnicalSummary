@@ -2,6 +2,7 @@ package com.cloud.aiassistant.formdesign.dao;
 
 import com.cloud.aiassistant.formdesign.pojo.FormDataJudgeDuplicateQueryDTO;
 import com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO;
+import com.cloud.aiassistant.formdesign.pojo.FormRowDataDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -25,4 +26,10 @@ public interface FormDataMapper {
      * @return
      */
     List<Map<String,Object>> selectByTableColumnValue(FormDataJudgeDuplicateQueryDTO formDataJudgeDuplicateQueryDTO);
+
+    /**
+     * 新增一个表单数据
+     * @param formRowDataDTO 一个表单的一行数据
+     */
+    void insertFormOneRowData(FormRowDataDTO formRowDataDTO);
 }

@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cloud.aiassistant.formdesign.dao.FormDataMapper" >
 
+
     <select id="selectMyFormDataAndAuthToMeData" resultType="java.util.Map" parameterType="com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO">
         select
             *
@@ -27,5 +28,18 @@
         from ${tableName}
         where ${columnName} = #{columnValue}
     </select>
+
+    <insert id="insertFormOneRowData">
+        insert into ${tableName} (
+            <foreach collection="columnValueList" index="index" item="item" separator=",">
+                ${item.columnName}
+            </foreach>
+        )
+        values (
+            <foreach collection="columnValueList" index="index" item="item" separator=",">
+                #{item.columnValue}
+            </foreach>
+        )
+    </insert>
 
 </mapper>

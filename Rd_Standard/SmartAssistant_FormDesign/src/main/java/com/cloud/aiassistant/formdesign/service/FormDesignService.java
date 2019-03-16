@@ -23,6 +23,7 @@ import java.util.Set;
 
 /**
  * 表单设计器(表单配置、字段配置、查询条件配置、展示结果配置) Service
+ * 注意：创建表单的时候：每个表单默认增加 create_user、create_time、tenant_id3个属性，提供内部私有方法获得
  * @author ChengYun
  * @date 2019/3/10  Vesion 1.0
  */
@@ -95,6 +96,7 @@ public class FormDesignService {
 
         return myFormDesign;
     }
+
 
 
 }

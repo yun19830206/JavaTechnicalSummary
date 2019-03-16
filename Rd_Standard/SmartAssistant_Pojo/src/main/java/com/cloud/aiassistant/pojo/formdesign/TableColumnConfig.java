@@ -13,6 +13,12 @@ import java.sql.Timestamp;
  */
 @Data
 public class TableColumnConfig {
+
+    /** 创建表单的时候：每个表单默认增加 create_user、create_time、tenant_id3个 */
+    public static final String DEFAULT_COLUMN_CREATE_USER = "create_user";
+    public static final String DEFAULT_COLUMN_CREATE_TIME = "create_time";
+    public static final String DEFAULT_COLUMN_TENANT_ID = "tenant_id";
+
     /** 主键ID */
     private Long id;
 

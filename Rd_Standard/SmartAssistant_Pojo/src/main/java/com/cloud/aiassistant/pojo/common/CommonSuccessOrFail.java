@@ -27,7 +27,7 @@ public class CommonSuccessOrFail {
 
     /** 业务操作成功 */
     public static CommonSuccessOrFail success(String resultDesc){
-        return new CommonSuccessOrFail(CODE_ERROR,resultDesc);
+        return new CommonSuccessOrFail(CODE_SUCCESS,resultDesc);
     }
 
     /** 业务操作失败，失败原因resultDesc，可能性较多 */
