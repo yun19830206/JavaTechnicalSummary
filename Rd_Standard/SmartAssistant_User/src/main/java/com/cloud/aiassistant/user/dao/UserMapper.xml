@@ -18,23 +18,29 @@
     select
         <include refid="Base_Column_List" />
     from pub_user
-    where user_name = #{userName,jdbcType=VARCHAR}
-      and password = #{password,jdbcType=VARCHAR}
+    where user_name = #{userName}
+      and password = #{password}
     limit 1
   </select>
 
   <update id="bindWxOpenId" parameterType="com.cloud.aiassistant.user.pojo.WxBindUserDTO">
     update pub_user
-      set wx_openid = #{wxOpenId,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
+      set wx_openid = #{wxOpenId}
+    where id = #{id}
   </update>
 
   <select id="selectByOpenid" resultType="com.cloud.aiassistant.pojo.user.User">
     select
         <include refid="Base_Column_List" />
     from pub_user
-    where wx_openid = #{openid,jdbcType=VARCHAR}
-    limit 1
+    where wx_openid = #{openid}
+  </select>
+
+  <select id="listAllUser" resultType="com.cloud.aiassistant.pojo.user.User">
+    select
+    <include refid="Base_Column_List" />
+    from pub_user
+    where tenant_id = #{tenantId}
   </select>
 
 </mapper>

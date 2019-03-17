@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 本Controller的作用：SpringMVC请求参数获取的几种方法。
  * @author ChengYun
@@ -61,6 +63,15 @@ public class UserController {
         }else{
             return AjaxResponse.success(user);
         }
+    }
+
+    /**
+     * 获得本租户的所有用户信息
+     */
+    @RequestMapping("/list/users")
+    public AjaxResponse listAllUsers(){
+        List<User> userList = userService.listAllUsers();
+        return AjaxResponse.success(userList);
     }
 
 

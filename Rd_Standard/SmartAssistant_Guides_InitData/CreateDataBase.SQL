@@ -129,6 +129,9 @@ create table pub_auth_form_data
 alter table pub_auth_form_data comment '表单数据赋权：将我创建的表的数据，付给别人：可看、可改';
 
 
+
+
+
 ######################初始化数据#####################
 ## 创建租户表数据
 INSERT INTO pub_tenant_config(id, tenant_number, tenant_name, create_time)  VALUES ('200', '18651886338888', 'CRM智能助手', '2019-03-09 22:13:25');

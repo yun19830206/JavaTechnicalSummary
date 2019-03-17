@@ -1,6 +1,7 @@
 package com.cloud.aiassistant.user.service;
 
 import com.cloud.aiassistant.core.utils.EncryptionUtils;
+import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.core.wxsdk.WxApiComponent;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.user.User;
@@ -10,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * 用户Service
@@ -26,6 +30,9 @@ public class UserService {
 
     @Autowired
     private WxApiComponent wxApiComponent ;
+
+    @Autowired
+    private HttpSession session ;
 
 
     /**
@@ -100,5 +107,15 @@ public class UserService {
         }
 
         return loginedUser ;
+    }
+
+    /** 返回本租户的所有用户信息 */
+    public List<User> listAllUsers() {
+        User logineduser = SessionUserUtils.getUserFromSession(session) ;
+        List<User> userList = userDao.listAllUser(logineduser.getTenantId());
+
+        //去除敏感信息
+        userList.forEach(user -> user.setPassword("******"));
+        return userList;
     }
 }

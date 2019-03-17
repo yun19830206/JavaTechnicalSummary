@@ -14,6 +14,7 @@ public class User {
 
     /** 放入Session中key的唯一标识 */
     public static final String SESSION_KEY_USER = "user" ;
+    public static final String SESSION_KEY_WX_USER = "wxUser" ;
 
     /** 主键ID */
     private Long id;

@@ -52,5 +52,12 @@ public class FormDesignController {
         return AjaxResponse.success(tableConfigSet);
     }
 
+    /** [赋权功能--表单配置]将我创建的表单配置，付给其他人能管理数据 */
+    @RequestMapping("/auth/designtable")
+    public AjaxResponse authDesignTable(){
+
+        return AjaxResponse.success();
+    }
+
 
 }

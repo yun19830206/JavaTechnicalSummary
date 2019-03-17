@@ -1,14 +1,14 @@
 package com.cloud.aiassistant.formdesign.service;
 
 import com.cloud.aiassistant.core.utils.PageHelperUtils;
+import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.enums.formdesign.TableColumnEnum;
-import com.cloud.aiassistant.formdesign.dao.*;
+import com.cloud.aiassistant.formdesign.dao.FormDataMapper;
 import com.cloud.aiassistant.formdesign.pojo.*;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.common.PageParam;
 import com.cloud.aiassistant.pojo.common.PageResult;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableConfig;
 import com.cloud.aiassistant.pojo.user.User;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -53,7 +53,7 @@ public class FormDataService {
         FormDesignVO formDesignVO = formDesignService.getFormDesignVOById(formDataQueryDTO.getTableId());
         if(null == formDesignVO || null == formDesignVO.getTableConfig() || null == formDesignVO.getTableQueryConfigList()){ return null; }
         formDataQueryDTO.setTableName(formDesignVO.getTableConfig().getEnglishName());
-        User user=(User) session.getAttribute(User.SESSION_KEY_USER);
+        User user = SessionUserUtils.getUserFromSession(session);
         formDataQueryDTO.setUserId(user.getId());
         //TODO 这里没有做选择的业务查询条件，太复杂，因为业务条件 可能是 大于，可能是等于，也可能是like。 用Map做不到，要封装一个对象：properName,propertyValue,queryType
 
@@ -78,7 +78,7 @@ public class FormDataService {
         FormDesignVO formDesignVO = formDesignService.getFormDesignVOById(formDataQueryDTO.getTableId());
         if(null == formDesignVO || null == formDesignVO.getTableConfig() || null == formDesignVO.getTableQueryConfigList()){ return new ArrayList<>(); }
         formDataQueryDTO.setTableName(formDesignVO.getTableConfig().getEnglishName());
-        User user=(User) session.getAttribute(User.SESSION_KEY_USER);
+        User user = SessionUserUtils.getUserFromSession(session);
         formDataQueryDTO.setUserId(user.getId());
 
         List<Map<String, Object>> dataList = formDataDao.selectMyFormDataAndAuthToMeData(formDataQueryDTO);
@@ -144,7 +144,7 @@ public class FormDataService {
                 iterator.remove();
             }
         }
-        User user=(User) session.getAttribute(User.SESSION_KEY_USER);
+        User user = SessionUserUtils.getUserFromSession(session);
         formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_CREATE_USER,user.getId()+""));
         formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_CREATE_TIME, new Timestamp(System.currentTimeMillis()).toString()));
         formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_TENANT_ID,user.getTenantId()+""));
@@ -165,7 +165,7 @@ public class FormDataService {
         Map<String,Map<Long,String>> extendValueMap = new HashMap<>();
         //定义本数据中 所有引用外键表的Map<tableDesingId,FormDesignVO>
         Map<Long,FormDesignVO> foreignFormDesignVOMap = new HashMap<>();
-        User user=(User) session.getAttribute(User.SESSION_KEY_USER);
+        User user = SessionUserUtils.getUserFromSession(session);
 
         //1：遍历本设计表字段 获得外键字段，并构建外键FormDataQueryDTO,依次放入parentFormDataQueryDTOMap，extendValueMap，foreignFormDesignVOMap
         tableColumnConfigList.forEach(tableColumnConfig -> {

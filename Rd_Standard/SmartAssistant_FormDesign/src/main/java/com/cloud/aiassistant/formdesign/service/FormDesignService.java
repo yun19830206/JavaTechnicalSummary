@@ -1,5 +1,6 @@
 package com.cloud.aiassistant.formdesign.service;
 
+import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.formdesign.dao.TableColumnConfigMapper;
 import com.cloud.aiassistant.formdesign.dao.TableConfigMapper;
 import com.cloud.aiassistant.formdesign.dao.TableDisplayConfigMapper;
@@ -49,7 +50,7 @@ public class FormDesignService {
 
     /** 获得我创建的表单配置数据 */
     public List<TableConfig> getMyCreateFormDesign() {
-        User user=(User) session.getAttribute(User.SESSION_KEY_USER);
+        User user = SessionUserUtils.getUserFromSession(session);
         List<TableConfig> myCreateTableConfigList = tableConfigDao.selectByUserId(user.getId());
         return myCreateTableConfigList;
     }
@@ -82,7 +83,7 @@ public class FormDesignService {
         Set<TableConfig> myFormDesign = new HashSet<>();
 
         //获得我创建的,加入到总体结果当中
-        User user=(User) session.getAttribute(User.SESSION_KEY_USER);
+        User user = SessionUserUtils.getUserFromSession(session);
         List<TableConfig> myCreateTableConfigList = tableConfigDao.selectByUserId(user.getId());
         if (null != myCreateTableConfigList && myCreateTableConfigList.size() > 0){
             myCreateTableConfigList.forEach(tableConfig -> myFormDesign.add(tableConfig));

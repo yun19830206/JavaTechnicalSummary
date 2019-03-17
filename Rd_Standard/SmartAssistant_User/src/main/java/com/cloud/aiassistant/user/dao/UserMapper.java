@@ -5,6 +5,8 @@ import com.cloud.aiassistant.user.pojo.WxBindUserDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * Use用户Dao
  */
@@ -22,4 +24,6 @@ public interface UserMapper {
     /** 根据微信openid，获得绑定此openid的用户信息 */
     User selectByOpenid(@Param("openid") String openid);
 
+    /** 返回本租户的所有用户信息 */
+    List<User> listAllUser(@Param("tenantId") Long tenantId);
 }
