@@ -3,6 +3,7 @@ package com.cloud.aiassistant.formdata.service;
 import com.cloud.aiassistant.core.utils.PageHelperUtils;
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.enums.formdesign.TableColumnTypeEnum;
+import com.cloud.aiassistant.file.dao.FileMapper;
 import com.cloud.aiassistant.formdata.dao.FormDataMapper;
 import com.cloud.aiassistant.formdata.dao.TableDataAuthMapper;
 import com.cloud.aiassistant.formdata.pojo.FormDataJudgeDuplicateQueryDTO;
@@ -14,6 +15,7 @@ import com.cloud.aiassistant.formdesign.service.FormDesignService;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.common.PageParam;
 import com.cloud.aiassistant.pojo.common.PageResult;
+import com.cloud.aiassistant.pojo.file.PublicFile;
 import com.cloud.aiassistant.pojo.formdata.TableDataAuth;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
 import com.cloud.aiassistant.pojo.user.User;
@@ -50,6 +52,9 @@ public class FormDataService {
     @Autowired
     private TableDataAuthMapper tableDataAuthDao ;
 
+    @Autowired
+    private FileMapper fileDao ;
+
 
     /**
      * 获得我能查看的表单数据(权限见赋权功能):我创建的 和 赋权给我的: 带分页
@@ -72,7 +77,7 @@ public class FormDataService {
 
         //将外键引用其他表的ID字段，扩展到展示字段
         if(null != tableResultPage.getList() && tableResultPage.getList().size() > 0 ) {
-            this.extendTableDataForeignValue(formDesignVO.getTableColumnConfigList(),tableResultPage.getList());
+            this.extendTableData(formDesignVO.getTableColumnConfigList(),tableResultPage.getList());
         }
 
         return PageHelperUtils.getPageResult(tableResultPage) ;
@@ -94,7 +99,7 @@ public class FormDataService {
         List<Map<String, Object>> dataList = formDataDao.selectMyFormDataAndAuthToMeData(formDataQueryDTO);
         //将外键引用其他表的ID字段，扩展到展示字段
         if(null != dataList && dataList.size() > 0 ) {
-            this.extendTableDataForeignValue(formDesignVO.getTableColumnConfigList(),dataList);
+            this.extendTableData(formDesignVO.getTableColumnConfigList(),dataList);
         }
 
         return dataList;
@@ -167,7 +172,61 @@ public class FormDataService {
         return CommonSuccessOrFail.success("数据校验通过。");
     }
 
-    /** 根据表单配置、表单字段配置，将 外键引用的字段 扩充展示 引用表的展示字段 */
+    /** 将外键引用的ID，文件引用的ID，扩展成 外键展示名称 与 文件展示名称 */
+    private void extendTableData(List<TableColumnConfig> tableColumnConfigList, List<Map<String, Object>> formDataList) {
+        //1：扩展 外键引用的ID扩展成 外键展示名称
+        this.extendTableDataForeignValue(tableColumnConfigList,formDataList);
+        //2: 扩展 文件引用的ID扩展成 文件展示名称
+        this.extendTableDataFileValue(tableColumnConfigList,formDataList);
+    }
+
+    /** 根据表单配置、表单字段配置，将 文件ID扩展成ID与文件名称 */
+    private void extendTableDataFileValue(List<TableColumnConfig> tableColumnConfigList, List<Map<String, Object>> formDataList) {
+
+        //定义本表单配置数据的文件引用字段Set<FileColumnName>
+        Set<String> fileColumnNameSet = new HashSet<>();
+        //记录本表单数据所有引用文件数据Map<fileId,fileName>
+        Map<Long,String> fileIdValueMap = new HashMap<>();
+
+        User user = SessionUserUtils.getUserFromSession(session);
+
+        //1：遍历本设计表字段 获得外键字段，并构建外键FormDataQueryDTO,依次放入parentFormDataQueryDTOMap，extendValueMap，foreignFormDesignVOMap
+        tableColumnConfigList.forEach(tableColumnConfig -> {
+            if(TableColumnTypeEnum.COLUMN_FILE == tableColumnConfig.getColType()){
+                fileColumnNameSet.add(tableColumnConfig.getEnglishName());
+            }
+        });
+        if(fileColumnNameSet.size()<1){ return;}
+
+        //2：遍历 遍历formDataList,获得字段对应文件引用ID
+        formDataList.forEach(formDataMap -> formDataMap.forEach((column, columnVal) ->{
+            if(fileColumnNameSet.contains(column)){
+                fileIdValueMap.put(Long.parseLong(columnVal.toString()),"");
+            }
+        }));
+        if(fileIdValueMap.size()<1) {return;}
+
+        //3：得到了文件引用的ID，依次获得每个文件ID的文件名, 放入到fileIdValueMap当中
+        List<PublicFile> fileList = fileDao.listByIds(fileIdValueMap.keySet());
+        fileList.forEach(file ->{
+            Long fileId = file.getId();
+            fileIdValueMap.put(file.getId(),file.getFileNameOriginal());
+        });
+
+        //4：遍历要扩展的结果数据formDataList，将外键字段的value，替换成Map<原Id,外键表的Display字段
+        formDataList.forEach(oneRowMap ->{
+            oneRowMap.forEach((columnName,colunmValue) ->{
+                if(fileColumnNameSet.contains(columnName)){
+                    Map<String,Object> extendMap = new HashMap<>();
+                    extendMap.put("originValue",colunmValue);
+                    extendMap.put("displayValue",fileIdValueMap.get(colunmValue));
+                    oneRowMap.put(columnName,extendMap);
+                }
+            });
+        });
+    }
+
+    /** 根据表单配置、表单字段配置，将 外键引用的字段 扩充展示 引用表的展示字段;  */
     private void extendTableDataForeignValue(List<TableColumnConfig> tableColumnConfigList, List<Map<String, Object>> formDataList) {
         //定义外键引用父表的Map<本表属性名,本属性引用表查询DTO>
         Map<String,FormDataQueryDTO> parentFormDataQueryDTOMap = new HashMap<>();
