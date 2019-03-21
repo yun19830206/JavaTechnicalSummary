@@ -3,9 +3,12 @@ package com.cloud.aiassistant.formdesign.web;
 import com.cloud.aiassistant.formdesign.pojo.FormDesignVO;
 import com.cloud.aiassistant.formdesign.service.FormDesignService;
 import com.cloud.aiassistant.pojo.common.AjaxResponse;
+import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.formdesign.TableConfig;
+import com.cloud.aiassistant.pojo.formdesign.TableDesignAuth;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,9 +57,29 @@ public class FormDesignController {
 
     /** [赋权功能--表单配置]将我创建的表单配置，付给其他人能管理数据 */
     @RequestMapping("/auth/designtable")
-    public AjaxResponse authDesignTable(){
+    public AjaxResponse authDesignTable(@RequestBody List<TableDesignAuth> tableDesignAuthList){
+        if(null == tableDesignAuthList || tableDesignAuthList.size()<1){
+            return AjaxResponse.failed(null,"授权数据为空");
+        }
+        try{
+            formDesignService.authDesignTable(tableDesignAuthList);
+        }catch (Exception e){
+            log.error("表单配置授权失败："+e.getMessage());
+            e.printStackTrace();
+            return AjaxResponse.failed("授权失败");
+        }
+        return AjaxResponse.success(null,"授权成功");
+    }
 
-        return AjaxResponse.success();
+    /** [已赋权数据--表单配置]获得当前表单配置，已经赋权的人员信息 */
+    @RequestMapping("/list/authdesigntable")
+    public AjaxResponse listAuthDesignTable(Long tableId){
+        if(null == tableId || tableId < 0){
+            return AjaxResponse.failed("表单ID为空");
+        }
+
+        List<TableDesignAuth> tableDesignAuthList = formDesignService.listAuthDisignTable(tableId);
+        return AjaxResponse.success(tableDesignAuthList);
     }
 
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.aiassistant.formdesign.dao.TableDesignAuthMapper">
+
+    <sql id="Base_Column_List">
+        id, table_id, user_id, create_user, create_time, tenant_id
+    </sql>
+
+    <select id="selectByPrimaryKey" resultType="com.cloud.aiassistant.pojo.formdesign.TableDesignAuth">
+        select
+          <include refid="Base_Column_List"/>
+        from pub_auth_form
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <select id="selectByTableId" resultType="com.cloud.aiassistant.pojo.formdesign.TableDesignAuth">
+        select
+            a.table_id, a.user_id, a.create_user, a.create_time, a.tenant_id, b.user_name
+        from pub_auth_form a , pub_user b
+        where a.user_id = b.id
+            and table_id = #{tableId}
+    </select>
+
+    <delete id="deleteByPrimaryKey">
+        DELETE FROM pub_auth_form
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByTableId">
+        DELETE FROM pub_auth_form
+        WHERE table_id = #{tableId}
+    </delete>
+
+    <insert id="insert">
+        INSERT INTO pub_auth_form (table_id, user_id,
+                                   create_user, create_time, tenant_id)
+        VALUES (#{tableId},
+                #{userId},
+                #{createUser},
+                #{createTime},
+                #{tenantId})
+    </insert>
+
+
+    <insert id="insertBatch">
+        INSERT INTO pub_auth_form (table_id, user_id,
+                                   create_user, tenant_id)
+        VALUES
+            <foreach collection="list" item="item" index="index" separator=",">
+               (#{item.tableId},
+                #{item.userId},
+                #{item.createUser},
+                #{item.tenantId})
+            </foreach>
+    </insert>
+
+</mapper>

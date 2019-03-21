@@ -1,7 +1,7 @@
 package com.cloud.aiassistant.pojo.formdesign;
 
 
-import com.cloud.aiassistant.enums.formdesign.TableColumnEnum;
+import com.cloud.aiassistant.enums.formdesign.TableColumnTypeEnum;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -35,7 +35,7 @@ public class TableColumnConfig {
     private String englishName;
 
     /** 字段类型(对应枚举TableColumnEnum:单行文本框、下拉框、富文本、多行文本框、日期、数字、手机号、邮箱号、附件、外键引用框) */
-    private TableColumnEnum colType;
+    private TableColumnTypeEnum colType;
 
     /** 字段长度 */
     private Integer colLength;

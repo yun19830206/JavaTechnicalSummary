@@ -1,4 +1,4 @@
-package com.cloud.aiassistant.formdesign.pojo;
+package com.cloud.aiassistant.formdata.pojo;
 
 import lombok.Data;
 

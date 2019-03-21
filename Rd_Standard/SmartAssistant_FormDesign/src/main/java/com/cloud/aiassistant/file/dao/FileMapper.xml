@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloud.aiassistant.file.dao.FileMapper">
+
+    <sql id="Base_Column_List">
+        id, file_name_original, file_name_new, relative_path, absolute_path, url, content_type,
+        create_user, create_time, tenant_id, del
+    </sql>
+
+    <select id="selectByPrimaryKey" resultType="com.cloud.aiassistant.pojo.file.PublicFile">
+        select
+          <include refid="Base_Column_List"/>
+        from pub_file
+        where id = #{id}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM pub_file
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.cloud.aiassistant.pojo.file.PublicFile" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pub_file (id, file_name_original, file_name_new,
+                              relative_path, absolute_path, url,
+                              content_type, create_user, create_time,
+                              tenant_id, del)
+        VALUES (#{id},
+                #{fileNameOriginal},
+                #{fileNameNew},
+                #{relativePath},
+                #{absolutePath},
+                #{url},
+                #{contentType},
+                #{createUser},
+                #{createTime},
+                #{tenantId},
+                0)
+    </insert>
+
+    <update id="updateUrl">
+        update pub_file set url = #{url} where id = #{id}
+    </update>
+</mapper>

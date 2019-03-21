@@ -52,7 +52,7 @@ public class UserController {
 
     /**
      * 根据微信openid获得User对象。 用于给机器人做第三方认证使用。
-     * post方式(Content-Type: application/json) 可以获得参数的值
+     * post方式(Content-Type: application/json) 可以获得参数的值, 或者Get方式
      */
     @RequestMapping("/wx/getwxuser")
     public AjaxResponse getWxUser(String openid){

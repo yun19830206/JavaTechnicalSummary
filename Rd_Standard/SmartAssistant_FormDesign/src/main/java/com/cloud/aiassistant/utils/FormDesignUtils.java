@@ -1,4 +1,4 @@
-package com.cloud.aiassistant.formdesign.utils;
+package com.cloud.aiassistant.utils;
 
 import com.cloud.aiassistant.formdesign.pojo.FormDesignVO;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;

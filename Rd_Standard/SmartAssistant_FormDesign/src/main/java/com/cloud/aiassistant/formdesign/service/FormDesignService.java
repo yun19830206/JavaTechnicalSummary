@@ -1,16 +1,12 @@
 package com.cloud.aiassistant.formdesign.service;
 
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
-import com.cloud.aiassistant.formdesign.dao.TableColumnConfigMapper;
-import com.cloud.aiassistant.formdesign.dao.TableConfigMapper;
-import com.cloud.aiassistant.formdesign.dao.TableDisplayConfigMapper;
-import com.cloud.aiassistant.formdesign.dao.TableQueryConfigMapper;
+import com.cloud.aiassistant.formdesign.dao.*;
 import com.cloud.aiassistant.formdesign.pojo.FormDesignVO;
-import com.cloud.aiassistant.formdesign.utils.FormDesignUtils;
-import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableDisplayConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableQueryConfig;
+import com.cloud.aiassistant.pojo.common.AjaxResponse;
+import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
+import com.cloud.aiassistant.pojo.formdesign.*;
+import com.cloud.aiassistant.utils.FormDesignUtils;
 import com.cloud.aiassistant.pojo.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +42,9 @@ public class FormDesignService {
 
     @Autowired
     private TableDisplayConfigMapper tableDisplayConfigDao ;
+
+    @Autowired
+    private TableDesignAuthMapper tableDesignAuthDao ;
 
     @Autowired
     private HttpSession session;
@@ -99,5 +100,45 @@ public class FormDesignService {
     }
 
 
+    /**
+     * [赋权功能--表单配置]将我创建的表单配置，付给其他人能管理数据
+     * @param tableDesignAuthList
+     * @return
+     */
+    public void authDesignTable(List<TableDesignAuth> tableDesignAuthList) {
+        if(null == tableDesignAuthList || tableDesignAuthList.size()<1){
+            return;
+        }
 
+        //1：TODO 权限判断，只有创建此表单配置的人才可以授权(表的创建者 与 当前用户一致)
+
+        User user = SessionUserUtils.getUserFromSession(session);
+        //2：填入必要数据，以便于数据保存完成
+        tableDesignAuthList.forEach(tableDesignAuth -> {
+            tableDesignAuth.setCreateUser(user.getId());
+            tableDesignAuth.setTenantId(user.getTenantId());
+        });
+
+        //3：数据入库之前，先删除以前授权数据
+        tableDesignAuthDao.deleteByTableId(tableDesignAuthList.get(0).getTableId());
+
+        //4：授权数据入库
+        tableDesignAuthDao.insertBatch(tableDesignAuthList);
+
+    }
+
+    /**
+     * 获得当前表单配置，已经赋权的人员信息
+     * @param tableId 当前表单配置ID
+     * @return
+     */
+    public List<TableDesignAuth> listAuthDisignTable(Long tableId) {
+        if(null == tableId || tableId < 0){
+            return new ArrayList<>();
+        }
+
+        return tableDesignAuthDao.selectByTableId(tableId);
+    }
 }
+
+

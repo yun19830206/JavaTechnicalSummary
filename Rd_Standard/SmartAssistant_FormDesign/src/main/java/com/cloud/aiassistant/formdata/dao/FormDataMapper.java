@@ -1,8 +1,8 @@
-package com.cloud.aiassistant.formdesign.dao;
+package com.cloud.aiassistant.formdata.dao;
 
-import com.cloud.aiassistant.formdesign.pojo.FormDataJudgeDuplicateQueryDTO;
-import com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO;
-import com.cloud.aiassistant.formdesign.pojo.FormRowDataDTO;
+import com.cloud.aiassistant.formdata.pojo.FormDataJudgeDuplicateQueryDTO;
+import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
+import com.cloud.aiassistant.formdata.pojo.FormRowDataDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

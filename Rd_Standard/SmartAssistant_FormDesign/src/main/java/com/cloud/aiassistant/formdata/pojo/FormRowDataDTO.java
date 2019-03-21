@@ -1,10 +1,8 @@
-package com.cloud.aiassistant.formdesign.pojo;
+package com.cloud.aiassistant.formdata.pojo;
 
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 表单的一行数据，用于 增加一个表单的一行数据

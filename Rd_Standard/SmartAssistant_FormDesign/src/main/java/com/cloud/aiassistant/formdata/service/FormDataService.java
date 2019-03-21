@@ -1,13 +1,20 @@
-package com.cloud.aiassistant.formdesign.service;
+package com.cloud.aiassistant.formdata.service;
 
 import com.cloud.aiassistant.core.utils.PageHelperUtils;
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
-import com.cloud.aiassistant.enums.formdesign.TableColumnEnum;
-import com.cloud.aiassistant.formdesign.dao.FormDataMapper;
+import com.cloud.aiassistant.enums.formdesign.TableColumnTypeEnum;
+import com.cloud.aiassistant.formdata.dao.FormDataMapper;
+import com.cloud.aiassistant.formdata.dao.TableDataAuthMapper;
+import com.cloud.aiassistant.formdata.pojo.FormDataJudgeDuplicateQueryDTO;
+import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
+import com.cloud.aiassistant.formdata.pojo.FormRowDataDTO;
+import com.cloud.aiassistant.formdata.pojo.OneColumnValue;
 import com.cloud.aiassistant.formdesign.pojo.*;
+import com.cloud.aiassistant.formdesign.service.FormDesignService;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.common.PageParam;
 import com.cloud.aiassistant.pojo.common.PageResult;
+import com.cloud.aiassistant.pojo.formdata.TableDataAuth;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
 import com.cloud.aiassistant.pojo.user.User;
 import com.github.pagehelper.PageHelper;
@@ -39,6 +46,9 @@ public class FormDataService {
 
     @Autowired
     private HttpSession session;
+
+    @Autowired
+    private TableDataAuthMapper tableDataAuthDao ;
 
 
     /**
@@ -169,7 +179,7 @@ public class FormDataService {
 
         //1：遍历本设计表字段 获得外键字段，并构建外键FormDataQueryDTO,依次放入parentFormDataQueryDTOMap，extendValueMap，foreignFormDesignVOMap
         tableColumnConfigList.forEach(tableColumnConfig -> {
-            if(null != tableColumnConfig.getFkValue() && tableColumnConfig.getFkValue() > 0 && TableColumnEnum.COLUMN_FOREIGN_KEY == tableColumnConfig.getColType()){
+            if(null != tableColumnConfig.getFkValue() && tableColumnConfig.getFkValue() > 0 && TableColumnTypeEnum.COLUMN_FOREIGN_KEY == tableColumnConfig.getColType()){
                 FormDataQueryDTO oneFormDataQueryDTO = new FormDataQueryDTO();
                 oneFormDataQueryDTO.setTableId(tableColumnConfig.getFkValue());
                 oneFormDataQueryDTO.setUserId(user.getId());
@@ -228,6 +238,36 @@ public class FormDataService {
         return "";
     }
 
+    /** [赋权功能--数据权限]将我创建的表的数据，付给别人：可看、可改 */
+    public void authTableData(List<TableDataAuth> tableDataAuthList) {
+        if(null == tableDataAuthList || tableDataAuthList.size()<1){
+            return;
+        }
 
+        //1：TODO 权限判断，只有创建此表单配置的人才可以授权(表的创建者 与 当前用户一致)
 
+        User user = SessionUserUtils.getUserFromSession(session);
+        //2：填入必要数据，以便于数据保存完成
+        tableDataAuthList.forEach(tableDesignAuth -> {
+            tableDesignAuth.setFromUser(user.getId());
+            tableDesignAuth.setCreateUser(user.getId());
+            tableDesignAuth.setTenantId(user.getTenantId());
+        });
+
+        //3：数据入库之前，先删除以前授权数据
+        tableDataAuthDao.deleteByUserIdAndTableId(user.getId(), tableDataAuthList.get(0).getFromTable());
+
+        //4：授权数据入库
+        tableDataAuthDao.insertBatch(tableDataAuthList);
+    }
+
+    /** 获得当前表单数据，已经将我表单数据赋权给其他人员的信息 */
+    public List<TableDataAuth> listAuthTableData(Long tableId) {
+        if(null == tableId || tableId < 1){
+            return new ArrayList<>();
+        }
+
+        User user = SessionUserUtils.getUserFromSession(session);
+        return tableDataAuthDao.selectByUserIdAndTableId(user.getId(), tableId);
+    }
 }

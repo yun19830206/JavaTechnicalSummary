@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cloud.aiassistant.formdesign.dao.FormDataMapper" >
+<mapper namespace="com.cloud.aiassistant.formdata.dao.FormDataMapper" >
 
 
-    <select id="selectMyFormDataAndAuthToMeData" resultType="java.util.Map" parameterType="com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO">
+    <select id="selectMyFormDataAndAuthToMeData" resultType="java.util.Map" parameterType="com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO">
         select
             *
         from ${tableName}

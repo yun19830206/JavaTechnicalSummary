@@ -21,4 +21,5 @@ public interface TableConfigMapper {
 
     /** 获得赋权给我的 表单配置数据 */
     List<TableConfig> selectAuthToMeTableConfig(@Param("autoToUserId") Long autoToUserId);
+
 }

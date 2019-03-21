@@ -56,13 +56,19 @@ public class LoginInterceptor implements HandlerInterceptor {
         HttpSession session=request.getSession(true);
         User user=(User) session.getAttribute(User.SESSION_KEY_USER);
 
-        //2：如果session判断权限失败。再次判断微信权限,规律是：在微信H5页面请求的任何一个Ajax接口，都必须在URL的最后带上?wxCode=wxCode
+        //2：如果用户名密码判断权限失败。再次判断微信权限在session中是否存在
+        if(user == null){
+            user = (User) session.getAttribute(User.SESSION_KEY_WX_USER);
+        }
+
+        //3：如果微信认证在Session中也失败，走微信初次认证逻辑。规律是：在微信H5页面请求的任何一个Ajax接口，都必须在URL的最后带上?wxCode=wxCode
         if(user == null || null == user.getId()){
             String wxCode = request.getParameter("wxCode") ;
             if(null != null && wxCode.length()>0){
                 user = doWxAuth(wxCode,session);
             }
         }
+
         if(null == user || null == user.getId()){
             response.sendRedirect(loginUrl);
             return false ;
@@ -77,7 +83,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.debug("    ent  Time:{}",System.currentTimeMillis());
         log.debug("    used Time:{} MS",System.currentTimeMillis()-startTime.get());
         startTime.remove();
-        request.getSession().removeAttribute(User.SESSION_KEY_WX_USER);
+
     }
 
     /** 使用微信wxCode做认证。 */

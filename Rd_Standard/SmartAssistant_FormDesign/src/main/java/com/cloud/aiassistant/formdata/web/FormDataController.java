@@ -1,13 +1,14 @@
-package com.cloud.aiassistant.formdesign.web;
+package com.cloud.aiassistant.formdata.web;
 
-import com.cloud.aiassistant.formdesign.pojo.FormDataJudgeDuplicateQueryDTO;
-import com.cloud.aiassistant.formdesign.pojo.FormDataQueryDTO;
-import com.cloud.aiassistant.formdesign.pojo.FormRowDataDTO;
-import com.cloud.aiassistant.formdesign.service.FormDataService;
+import com.cloud.aiassistant.formdata.pojo.FormDataJudgeDuplicateQueryDTO;
+import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
+import com.cloud.aiassistant.formdata.pojo.FormRowDataDTO;
+import com.cloud.aiassistant.formdata.service.FormDataService;
 import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.common.PageParam;
 import com.cloud.aiassistant.pojo.common.PageResult;
+import com.cloud.aiassistant.pojo.formdata.TableDataAuth;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,7 +66,35 @@ public class FormDataController {
         }else{
             return AjaxResponse.success(null,commonSuccessOrFail.getResultDesc());
         }
+    }
 
+    /** [赋权功能--数据权限]将我创建的表的数据，付给别人：可看、可改 */
+    @RequestMapping("/auth/tabledata")
+    public AjaxResponse authTableData(@RequestBody List<TableDataAuth> tableDataAuthList){
+        if(null == tableDataAuthList || tableDataAuthList.size()<1){
+            return AjaxResponse.failed(null,"授权数据为空");
+        }
+
+        try{
+            formDataService.authTableData(tableDataAuthList);
+        }catch (Exception e){
+            log.error("表单数据授权失败："+e.getMessage());
+            e.printStackTrace();
+            return AjaxResponse.failed("授权失败");
+        }
+        return AjaxResponse.success(null,"授权成功");
+    }
+
+
+    /** [已赋权数据--表单数据]获得当前表单数据，将我表单数据已经赋权给其他人员的信息 */
+    @RequestMapping("/list/authtabledata")
+    public AjaxResponse ListAuthTableData(Long tableId){
+        if(null == tableId || tableId < 0){
+            return AjaxResponse.failed("表单ID为空");
+        }
+
+        List<TableDataAuth> tableDataAuthList = formDataService.listAuthTableData(tableId);
+        return AjaxResponse.success(tableDataAuthList);
     }
 
 }

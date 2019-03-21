@@ -5,7 +5,7 @@ package com.cloud.aiassistant.enums.formdesign;
  * @author ChengYun
  * @date 2019/3/7 Version 1
  */
-public enum TableColumnEnum {
+public enum TableColumnTypeEnum {
 
     /**单行文本框*/
     COLUMN_SIGN_LINE_TEXT(100,"sign line text","单行文本框"),
@@ -36,7 +36,7 @@ public enum TableColumnEnum {
     /** 表单设计器字段类型中文描述 */
     private String columnChineseDesc ;
 
-    TableColumnEnum(Integer columnType, String columnEnglishDesc, String columnChineseDesc) {
+    TableColumnTypeEnum(Integer columnType, String columnEnglishDesc, String columnChineseDesc) {
         this.columnType = columnType;
         this.columnEnglishDesc = columnEnglishDesc;
         this.columnChineseDesc = columnChineseDesc;
