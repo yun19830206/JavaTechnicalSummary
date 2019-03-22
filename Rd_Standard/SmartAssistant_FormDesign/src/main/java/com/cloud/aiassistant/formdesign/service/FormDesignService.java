@@ -66,7 +66,7 @@ public class FormDesignService {
      */
     public FormDesignVO getFormDesignVOById(Long formid) {
         //1:获得表单配置数据
-        FormDesignVO formDesignVO = this.getFormDesignConfigByCacheAndDataBase(formid);
+        FormDesignVO formDesignVO = this.getFormDesignConfigWithoutExtendData(formid);
         //2:获得表单外键引用资源的所有数据，以便录入数据 和 查询条件方便使用
         if(null != formDesignVO && null != formDesignVO.getTableColumnConfigList() && formDesignVO.getTableColumnConfigList().size()>0){
             Map<String,List<SimpleTableData>> foreignKeyValues = this.getTableDesignForerignKeyValues(formDesignVO.getTableColumnConfigList());
@@ -77,8 +77,10 @@ public class FormDesignService {
 
     }
 
-    /** 根据表单设计ID，获得表单配置详细VO,先从缓存获取，获得不到再从数据库获得 */
-    private FormDesignVO getFormDesignConfigByCacheAndDataBase(Long formid) {
+    /** 根据表单设计ID，获得表单配置详细VO,先从缓存获取，获得不到再从数据库获得。
+     *  适合仅需要配置数据，不需要父级资源明细的配置
+     */
+    public FormDesignVO getFormDesignConfigWithoutExtendData(Long formid) {
 
         FormDesignVO formDesignVO = tableDesignVoCacheNMap.get(formid);
         if(null == formDesignVO){
@@ -108,10 +110,10 @@ public class FormDesignService {
         Map<Long,List<SimpleTableData>> tableSimpleTableDataMap = new HashMap<>();
         foreignColumnTableIdMap.forEach((columnName,tableDesignId) -> {
             //获得外键表的展示字段
-            List<TableColumnConfig> parenetTableColumnConfigList =  getFormDesignConfigByCacheAndDataBase(tableDesignId).getTableColumnConfigList();
+            List<TableColumnConfig> parenetTableColumnConfigList =  getFormDesignConfigWithoutExtendData(tableDesignId).getTableColumnConfigList();
             String parentDisplayColumnName = FormDesignUtils.getDisplayColumnNameFromColumnConfigList(parenetTableColumnConfigList);
             //获得外键表的全部数据
-            FormDesignVO parentFormDesignVO = getFormDesignConfigByCacheAndDataBase(tableDesignId);
+            FormDesignVO parentFormDesignVO = getFormDesignConfigWithoutExtendData(tableDesignId);
             FormDataQueryDTO parentFormDataQueryDTO = new FormDataQueryDTO();
             parentFormDataQueryDTO.setTableId(tableDesignId);
             parentFormDataQueryDTO.setTableName(parentFormDesignVO.getTableConfig().getEnglishName());

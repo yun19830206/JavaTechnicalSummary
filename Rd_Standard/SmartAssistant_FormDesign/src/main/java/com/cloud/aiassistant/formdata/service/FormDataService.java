@@ -130,7 +130,7 @@ public class FormDataService {
         if(null == formRowDataDTO || null == formRowDataDTO.getTableId() || formRowDataDTO.getTableId()<1 || null == formRowDataDTO.getColumnValueList()){
             CommonSuccessOrFail.fail("参数错误");
         }
-        FormDesignVO formDesignVO = formDesignService.getFormDesignVOById(formRowDataDTO.getTableId());
+        FormDesignVO formDesignVO = formDesignService.getFormDesignConfigWithoutExtendData(formRowDataDTO.getTableId());
         //2:根据表单配置数据类型和值，校验数据合法性
         CommonSuccessOrFail commonSuccessOrFail = this.validateFormData(formDesignVO,formRowDataDTO);
         if(CommonSuccessOrFail.CODE_ERROR == commonSuccessOrFail.getResultCode()){
