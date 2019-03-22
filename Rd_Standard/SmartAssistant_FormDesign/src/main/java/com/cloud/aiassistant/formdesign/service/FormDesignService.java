@@ -1,10 +1,11 @@
 package com.cloud.aiassistant.formdesign.service;
 
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
+import com.cloud.aiassistant.enums.formdesign.TableColumnTypeEnum;
+import com.cloud.aiassistant.formdata.dao.FormDataMapper;
+import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
 import com.cloud.aiassistant.formdesign.dao.*;
 import com.cloud.aiassistant.formdesign.pojo.FormDesignVO;
-import com.cloud.aiassistant.pojo.common.AjaxResponse;
-import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.formdesign.*;
 import com.cloud.aiassistant.utils.FormDesignUtils;
 import com.cloud.aiassistant.pojo.user.User;
@@ -14,11 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 表单设计器(表单配置、字段配置、查询条件配置、展示结果配置) Service
@@ -49,6 +47,12 @@ public class FormDesignService {
     @Autowired
     private HttpSession session;
 
+    @Autowired
+    private FormDataMapper forDataDao ;
+
+    /** 缓存所有表单的配置数据VO，此类数据接口调用很多，但是修改很少，特别适合缓存。 注意配置修改的时候要remove */
+    private Map<Long,FormDesignVO> tableDesignVoCacheNMap = new ConcurrentHashMap<>();
+
     /** 获得我创建的表单配置数据 */
     public List<TableConfig> getMyCreateFormDesign() {
         User user = SessionUserUtils.getUserFromSession(session);
@@ -61,24 +65,76 @@ public class FormDesignService {
      * @return AjaxResponse
      */
     public FormDesignVO getFormDesignVOById(Long formid) {
-        //获得表单配置数据，表单字段配置数据，表单查询条件数据，表单展示结果数据，进行拼接成FormDesignVO
-        TableConfig tableConfig = tableConfigDao.selectByPrimaryKey(formid);
-
-        List<TableColumnConfig> tableColumnConfigList = tableColumnConfigDao.selectByFormId(formid);
-
-        List<TableQueryConfig> tableQueryConfigList = tableQueryConfigDao.selectByFormId(formid);
-
-        List<TableDisplayConfig> tableDisplayConfigs = tableDisplayConfigDao.selectByFormId(formid);
-
-        FormDesignVO formDesignVO = FormDesignUtils.transTableDesignConfigToFormDesignVO(tableConfig, tableColumnConfigList, tableQueryConfigList, tableDisplayConfigs);
+        //1:获得表单配置数据
+        FormDesignVO formDesignVO = this.getFormDesignConfigByCacheAndDataBase(formid);
+        //2:获得表单外键引用资源的所有数据，以便录入数据 和 查询条件方便使用
+        if(null != formDesignVO && null != formDesignVO.getTableColumnConfigList() && formDesignVO.getTableColumnConfigList().size()>0){
+            Map<String,List<SimpleTableData>> foreignKeyValues = this.getTableDesignForerignKeyValues(formDesignVO.getTableColumnConfigList());
+            formDesignVO.setForeignKeyValues(foreignKeyValues);
+        }
 
         return formDesignVO ;
 
     }
 
+    /** 根据表单设计ID，获得表单配置详细VO,先从缓存获取，获得不到再从数据库获得 */
+    private FormDesignVO getFormDesignConfigByCacheAndDataBase(Long formid) {
+
+        FormDesignVO formDesignVO = tableDesignVoCacheNMap.get(formid);
+        if(null == formDesignVO){
+            //获得表单配置数据，表单字段配置数据，表单查询条件数据，表单展示结果数据，进行拼接成FormDesignVO
+            TableConfig tableConfig = tableConfigDao.selectByPrimaryKey(formid);
+            List<TableColumnConfig> tableColumnConfigList = tableColumnConfigDao.selectByFormId(formid);
+            List<TableQueryConfig> tableQueryConfigList = tableQueryConfigDao.selectByFormId(formid);
+            List<TableDisplayConfig> tableDisplayConfigs = tableDisplayConfigDao.selectByFormId(formid);
+            formDesignVO = FormDesignUtils.transTableDesignConfigToFormDesignVO(tableConfig, tableColumnConfigList, tableQueryConfigList, tableDisplayConfigs);
+            tableDesignVoCacheNMap.put(formid,formDesignVO);
+        }
+        return formDesignVO ;
+    }
+
+    /** 根据本表单的字段配置信息，获得本表单所有外键引用的值List */
+    private Map<String,List<SimpleTableData>> getTableDesignForerignKeyValues(List<TableColumnConfig> tableColumnConfigList) {
+        //1：遍历每个字段的配置，找到外键引用的字段名 和 引用表的ID  Map<ColumnName,tableDesignId>
+        Map<String,Long> foreignColumnTableIdMap = new HashMap<>();
+        tableColumnConfigList.forEach(tableColumnConfig -> {
+            if(TableColumnTypeEnum.COLUMN_FOREIGN_KEY == tableColumnConfig.getColType()){
+                foreignColumnTableIdMap.put(tableColumnConfig.getEnglishName(),tableColumnConfig.getFkValue());
+            }
+        });
+        if(foreignColumnTableIdMap.size()<1){ return null ;}
+
+        //2：根据tableDesignId,查询到此tableDesignId的displayColumnName,再找到对应<数据ID,展示字段ID>的List
+        Map<Long,List<SimpleTableData>> tableSimpleTableDataMap = new HashMap<>();
+        foreignColumnTableIdMap.forEach((columnName,tableDesignId) -> {
+            //获得外键表的展示字段
+            List<TableColumnConfig> parenetTableColumnConfigList =  getFormDesignConfigByCacheAndDataBase(tableDesignId).getTableColumnConfigList();
+            String parentDisplayColumnName = FormDesignUtils.getDisplayColumnNameFromColumnConfigList(parenetTableColumnConfigList);
+            //获得外键表的全部数据
+            FormDesignVO parentFormDesignVO = getFormDesignConfigByCacheAndDataBase(tableDesignId);
+            FormDataQueryDTO parentFormDataQueryDTO = new FormDataQueryDTO();
+            parentFormDataQueryDTO.setTableId(tableDesignId);
+            parentFormDataQueryDTO.setTableName(parentFormDesignVO.getTableConfig().getEnglishName());
+            User user = SessionUserUtils.getUserFromSession(session);
+            parentFormDataQueryDTO.setUserId(user.getId());
+            List<Map<String, Object>> columnValueList = forDataDao.selectMyFormDataAndAuthToMeData(parentFormDataQueryDTO);
+            //根据展示字段 与 外键表的全部数据， 获得简要数据格式
+            List<SimpleTableData> tableSimpleTableDataList = FormDesignUtils.getTableSimpleDataList(columnValueList,parentDisplayColumnName);
+            tableSimpleTableDataMap.put(tableDesignId,tableSimpleTableDataList);
+        });
+
+        //3: 组装1和2，形成结果数据
+        Map<String,List<SimpleTableData>> foreignColumnValueMap = new HashMap<>();
+        foreignColumnTableIdMap.forEach((columnName,tableDesignId) -> {
+            foreignColumnValueMap.put(columnName,tableSimpleTableDataMap.get(tableDesignId));
+        });
+
+        return foreignColumnValueMap ;
+    }
+
     /**
      * 获得所有表单菜单数据：我创建的和赋权给我的(第二组菜单 表单数据)
-     * @return
+     * @return Set<TableConfig>
      */
     public Set<TableConfig> getMyFormDesign() {
         Set<TableConfig> myFormDesign = new HashSet<>();
@@ -103,7 +159,7 @@ public class FormDesignService {
     /**
      * [赋权功能--表单配置]将我创建的表单配置，付给其他人能管理数据
      * @param tableDesignAuthList
-     * @return
+     * @return void
      */
     public void authDesignTable(List<TableDesignAuth> tableDesignAuthList) {
         if(null == tableDesignAuthList || tableDesignAuthList.size()<1){
@@ -130,7 +186,7 @@ public class FormDesignService {
     /**
      * 获得当前表单配置，已经赋权的人员信息
      * @param tableId 当前表单配置ID
-     * @return
+     * @return List<TableDesignAuth>
      */
     public List<TableDesignAuth> listAuthDisignTable(Long tableId) {
         if(null == tableId || tableId < 0){

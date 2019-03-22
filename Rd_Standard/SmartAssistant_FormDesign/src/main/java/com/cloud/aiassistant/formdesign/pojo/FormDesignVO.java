@@ -1,13 +1,11 @@
 package com.cloud.aiassistant.formdesign.pojo;
 
-import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableDisplayConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableQueryConfig;
+import com.cloud.aiassistant.pojo.formdesign.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 一个表单设计配置展示VO：表单、表单字段、表单查询、表单结果展示
@@ -28,5 +26,8 @@ public class FormDesignVO {
 
     /** 本表单的查询结果展示列配置集合 */
     private List<TableDisplayConfig> tableDisplayConfigList ;
+
+    /** 本表单外键引用的 字段 和 valueList 给查询 和 新建数据用 */
+    private Map<String,List<SimpleTableData>> foreignKeyValues ;
 
 }

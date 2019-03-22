@@ -1,11 +1,9 @@
 package com.cloud.aiassistant.utils;
 
 import com.cloud.aiassistant.formdesign.pojo.FormDesignVO;
-import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableDisplayConfig;
-import com.cloud.aiassistant.pojo.formdesign.TableQueryConfig;
+import com.cloud.aiassistant.pojo.formdesign.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,5 +49,38 @@ public class FormDesignUtils {
         formDesignVO.setTableQueryConfigList(tableQueryConfigList);
 
         return formDesignVO ;
+    }
+
+    /** 根据一个表单所有字段配置的List，获得本表单的被外键引用的展示字段 */
+    public static String getDisplayColumnNameFromColumnConfigList(List<TableColumnConfig> tableColumnConfigList) {
+        if(null == tableColumnConfigList ){
+            return "";
+        }
+        for(TableColumnConfig tableColumnConfig : tableColumnConfigList){
+            if(tableColumnConfig.getDisplayColumn() == 1){
+                return tableColumnConfig.getEnglishName();
+            }
+        }
+        return "";
+    }
+
+    /** 根据展示字段 与 外键表的全部数据， 获得简要数据格式 */
+    public static List<SimpleTableData> getTableSimpleDataList(List<Map<String, Object>> columnValueList, String parentDisplayColumnName) {
+        if(null == parentDisplayColumnName || parentDisplayColumnName.length()<1) {
+            return null ;
+        }
+        if(null == columnValueList || columnValueList.size()<1){
+            return null ;
+        }
+
+        List<SimpleTableData> simpleTableDataList = new ArrayList<>();
+
+        columnValueList.forEach(map ->{
+            Long id = Long.parseLong(map.get("id").toString());
+            String displayValue = (String) map.get(parentDisplayColumnName);
+            simpleTableDataList.add(new SimpleTableData(id,displayValue));
+        });
+
+        return simpleTableDataList ;
     }
 }

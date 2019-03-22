@@ -19,6 +19,7 @@ import com.cloud.aiassistant.pojo.file.PublicFile;
 import com.cloud.aiassistant.pojo.formdata.TableDataAuth;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
 import com.cloud.aiassistant.pojo.user.User;
+import com.cloud.aiassistant.utils.FormDesignUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -219,7 +220,7 @@ public class FormDataService {
                 if(fileColumnNameSet.contains(columnName)){
                     Map<String,Object> extendMap = new HashMap<>();
                     extendMap.put("originValue",colunmValue);
-                    extendMap.put("displayValue",fileIdValueMap.get(colunmValue));
+                    extendMap.put("displayValue",fileIdValueMap.get(Long.parseLong(colunmValue.toString())));
                     oneRowMap.put(columnName,extendMap);
                 }
             });
@@ -263,7 +264,7 @@ public class FormDataService {
         //3：得到了外键引用的字段、引用表ID和DataId，依次获得每个属性的全部展示字段value数据
         parentFormDataQueryDTOMap.forEach((columnName,foreignColumnFormDataQueryDTO) ->{
             FormDesignVO formDesignVO = foreignFormDesignVOMap.get(foreignColumnFormDataQueryDTO.getTableId());
-            String foreignColunmName = this.getDisplayColumnNameFromColumnConfigList(formDesignVO.getTableColumnConfigList());
+            String foreignColunmName = FormDesignUtils.getDisplayColumnNameFromColumnConfigList(formDesignVO.getTableColumnConfigList());
 
             List<Map<String,Object>> oneFormDataListMap = formDataDao.selectMyFormDataAndAuthToMeData(foreignColumnFormDataQueryDTO);
             for(Map<String,Object> oneMap : oneFormDataListMap){
@@ -282,19 +283,6 @@ public class FormDataService {
                 }
             });
         });
-    }
-
-    /** 根据一个表单所有字段配置的List，获得本表单的被外键引用的展示字段 */
-    private String getDisplayColumnNameFromColumnConfigList(List<TableColumnConfig> tableColumnConfigList) {
-        if(null == tableColumnConfigList ){
-            return "";
-        }
-        for(TableColumnConfig tableColumnConfig : tableColumnConfigList){
-            if(tableColumnConfig.getDisplayColumn() == 1){
-                return tableColumnConfig.getEnglishName();
-            }
-        }
-        return "";
     }
 
     /** [赋权功能--数据权限]将我创建的表的数据，付给别人：可看、可改 */

@@ -64,8 +64,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         //3：如果微信认证在Session中也失败，走微信初次认证逻辑。规律是：在微信H5页面请求的任何一个Ajax接口，都必须在URL的最后带上?wxCode=wxCode
         if(user == null || null == user.getId()){
             String wxCode = request.getParameter("wxCode") ;
-            if(null != null && wxCode.length()>0){
+            log.info("走到微信认证逻辑，wxCode=" + wxCode);
+            if(null != wxCode && wxCode.length()>0){
                 user = doWxAuth(wxCode,session);
+                log.info("走到微信认证结果对象user=" + user);
             }
         }
 
