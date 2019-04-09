@@ -22,6 +22,11 @@
             <artifactId>ai-assistant-formdesign</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.cloud.rdstandard</groupId>
+            <artifactId>ai-assistant-crm</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

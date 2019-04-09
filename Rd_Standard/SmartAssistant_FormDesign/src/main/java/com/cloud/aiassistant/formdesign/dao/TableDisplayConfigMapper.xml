@@ -33,6 +33,7 @@
           <include refid="Base_Column_List" />
         from pub_table_display
         where table_id = #{formid}
+        order by display_seq
     </select>
 
 </mapper>

@@ -48,6 +48,16 @@ public class FormDesignController {
         return AjaxResponse.success(formDesignVO);
     }
 
+    /**
+     * 刷新服务器缓存中表单配置数据，以便于前端没做表单设计页面，直接在数据库修改配置情况下 缓存数据过旧的情况
+     * @return AjaxResponse
+     */
+    @RequestMapping("/cache/reflash")
+    public AjaxResponse reflashFormdesignCache(){
+        formDesignService.reflashFormdesignCache();
+        return AjaxResponse.success();
+    }
+
     /** [管理端]获得所有表单菜单数据：我创建的和赋权给我的(第二组菜单 表单数据) */
     @RequestMapping("/get/myformdesign")
     public AjaxResponse getMyFormDesign(){

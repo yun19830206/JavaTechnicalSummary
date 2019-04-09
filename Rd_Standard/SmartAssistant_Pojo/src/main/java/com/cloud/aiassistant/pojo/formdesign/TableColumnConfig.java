@@ -18,6 +18,7 @@ public class TableColumnConfig {
     public static final String DEFAULT_COLUMN_CREATE_USER = "create_user";
     public static final String DEFAULT_COLUMN_CREATE_TIME = "create_time";
     public static final String DEFAULT_COLUMN_TENANT_ID = "tenant_id";
+    public static final String DEFAULT_COLUMN_DISPLAY_CUREATE_USER_NAME = "create_user_name";
 
     /** 主键ID */
     private Long id;

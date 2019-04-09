@@ -29,11 +29,19 @@
     where id = #{id}
   </update>
 
-  <select id="selectByOpenid" resultType="com.cloud.aiassistant.pojo.user.User">
+    <update id="updatePassword">
+      update pub_user
+        set  password= #{password}
+      where id = #{userId}
+
+    </update>
+
+    <select id="selectByOpenid" resultType="com.cloud.aiassistant.pojo.user.User">
     select
         <include refid="Base_Column_List" />
     from pub_user
     where wx_openid = #{openid}
+    limit 1
   </select>
 
   <select id="listAllUser" resultType="com.cloud.aiassistant.pojo.user.User">

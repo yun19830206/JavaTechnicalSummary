@@ -34,7 +34,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     private String wxAppSecret;
 
     /** 登入URL */
-    @Value("${login.url:/login.html}")
+    @Value("${login.url:/#/login}")
     private String loginUrl;
 
     /** 每个线程的接口开始时间，用于计算接口调用时间 */

@@ -87,13 +87,18 @@ public class FormDesignService {
             //获得表单配置数据，表单字段配置数据，表单查询条件数据，表单展示结果数据，进行拼接成FormDesignVO
             TableConfig tableConfig = tableConfigDao.selectByPrimaryKey(formid);
             List<TableColumnConfig> tableColumnConfigList = tableColumnConfigDao.selectByFormId(formid);
+            //默认在字段配置数据中，增加一个创建人配置数据
+            tableColumnConfigList.add(createDefaultCreateUserConlmnConfig(tableConfig));
             List<TableQueryConfig> tableQueryConfigList = tableQueryConfigDao.selectByFormId(formid);
             List<TableDisplayConfig> tableDisplayConfigs = tableDisplayConfigDao.selectByFormId(formid);
+            //默认在展示字段中，将创建人展示出来
+            tableDisplayConfigs.add(0,createDefaultCreateUserDisplayColumn(tableColumnConfigList.get(tableColumnConfigList.size()-1)));
             formDesignVO = FormDesignUtils.transTableDesignConfigToFormDesignVO(tableConfig, tableColumnConfigList, tableQueryConfigList, tableDisplayConfigs);
             tableDesignVoCacheNMap.put(formid,formDesignVO);
         }
         return formDesignVO ;
     }
+
 
     /** 根据本表单的字段配置信息，获得本表单所有外键引用的值List */
     private Map<String,List<SimpleTableData>> getTableDesignForerignKeyValues(List<TableColumnConfig> tableColumnConfigList) {
@@ -196,6 +201,41 @@ public class FormDesignService {
         }
 
         return tableDesignAuthDao.selectByTableId(tableId);
+    }
+
+    /** 刷新服务器缓存中表单配置数据，以便于前端没做表单设计页面，直接在数据库修改配置情况下 缓存数据过旧的情况 */
+    public void reflashFormdesignCache() {
+        tableDesignVoCacheNMap = new ConcurrentHashMap<>();
+    }
+
+    /** 给tableConfig 创建一个默认的创建人熟悉配置 */
+    private TableColumnConfig createDefaultCreateUserConlmnConfig(TableConfig tableConfig) {
+        TableColumnConfig createUserNameColumnConfig = new TableColumnConfig();
+        createUserNameColumnConfig.setChineseName("创建人");
+        createUserNameColumnConfig.setColLength(32);
+        createUserNameColumnConfig.setColSeq(99);
+        createUserNameColumnConfig.setColType(TableColumnTypeEnum.COLUMN_SIGN_LINE_TEXT);
+        createUserNameColumnConfig.setDisplayColumn(0);
+        createUserNameColumnConfig.setEmpty(1);
+        createUserNameColumnConfig.setEnglishName("create_user_name");
+        createUserNameColumnConfig.setTableId(tableConfig.getId());
+        createUserNameColumnConfig.setUniqued(0);
+        createUserNameColumnConfig.setTenantId(tableConfig.getTenantId());
+        createUserNameColumnConfig.setId(99L);
+        return createUserNameColumnConfig ;
+    }
+
+    /** 创建默认创建人展示字段 */
+    private TableDisplayConfig createDefaultCreateUserDisplayColumn(TableColumnConfig tableColumnConfig) {
+        TableDisplayConfig tableDisplayConfig = new TableDisplayConfig();
+        tableDisplayConfig.setTableColumnConfig(tableColumnConfig);
+        tableDisplayConfig.setTableColumn(tableColumnConfig.getId());
+        tableDisplayConfig.setDisplaySeq(0);
+        tableDisplayConfig.setId(99L);
+        tableDisplayConfig.setTableId(tableColumnConfig.getTableId());
+        tableDisplayConfig.setTenantId(tableColumnConfig.getTenantId());
+
+        return tableDisplayConfig;
     }
 }
 

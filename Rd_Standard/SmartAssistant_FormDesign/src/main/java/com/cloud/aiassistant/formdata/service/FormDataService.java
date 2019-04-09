@@ -19,6 +19,7 @@ import com.cloud.aiassistant.pojo.file.PublicFile;
 import com.cloud.aiassistant.pojo.formdata.TableDataAuth;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
 import com.cloud.aiassistant.pojo.user.User;
+import com.cloud.aiassistant.user.service.UserService;
 import com.cloud.aiassistant.utils.FormDesignUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -56,6 +57,8 @@ public class FormDataService {
     @Autowired
     private FileMapper fileDao ;
 
+    @Autowired
+    private UserService userService ;
 
     /**
      * 获得我能查看的表单数据(权限见赋权功能):我创建的 和 赋权给我的: 带分页
@@ -139,10 +142,26 @@ public class FormDataService {
         //3:设置正确的默认属性(创建人、创建时间、租户ID)
         formRowDataDTO = this.setFormOneRowDataDefaultValue(formRowDataDTO);
 
-        //4:保存数据
+        //4:去除前端传入的，可能会有FormRowDataDTO.columnValueList[0].columnValue 为空的情况
+        this.clearnNullColumnData(formRowDataDTO);
+
+        //5:保存数据
         formDataDao.insertFormOneRowData(formRowDataDTO);
 
         return CommonSuccessOrFail.success("新增成功");
+    }
+
+    /** 去除前端传入的，可能会有FormRowDataDTO.columnValueList[0].columnValue 为空的情况 */
+    private void clearnNullColumnData(FormRowDataDTO formRowDataDTO) {
+        List<OneColumnValue> columnValueList = formRowDataDTO.getColumnValueList();
+        List<OneColumnValue> targetColumnValueList = new ArrayList<>();
+        columnValueList.forEach(oneColumnValue -> {
+            if(null != oneColumnValue.getColumnValue() && oneColumnValue.getColumnValue().length() > 0){
+                targetColumnValueList.add(oneColumnValue);
+            }
+        });
+        formRowDataDTO.setColumnValueList(targetColumnValueList);
+
     }
 
     /** 设置正确的默认属性(创建人、创建时间、租户ID)，先移出传入的，再加入默认的 */
@@ -157,6 +176,9 @@ public class FormDataService {
                 iterator.remove();
             }
             if (TableColumnConfig.DEFAULT_COLUMN_TENANT_ID.equals(oneColumnValue.getColumnName())) {
+                iterator.remove();
+            }
+            if(TableColumnConfig.DEFAULT_COLUMN_DISPLAY_CUREATE_USER_NAME.equals(oneColumnValue.getColumnName())){
                 iterator.remove();
             }
         }
@@ -179,6 +201,23 @@ public class FormDataService {
         this.extendTableDataForeignValue(tableColumnConfigList,formDataList);
         //2: 扩展 文件引用的ID扩展成 文件展示名称
         this.extendTableDataFileValue(tableColumnConfigList,formDataList);
+        //3: 增加创建热默认返回字段
+        this.addCreateUserNameColumn(formDataList);
+    }
+
+    /** 在每一条返回数据中，增加创建人返回数据 */
+    private void addCreateUserNameColumn(List<Map<String, Object>> formDataList) {
+        formDataList.forEach(oneRowDataMap -> {
+            Long createUserId = Long.parseLong(oneRowDataMap.get("create_user").toString());
+            User user = userService.getUserById(createUserId);
+            String userName = "N/A" ;
+            if(null != user && null != user.getUserName()){
+                userName = user.getUserName();
+            }else{
+                userName = user.getId()+"";
+            }
+            oneRowDataMap.put("create_user_name",userName);
+        });
     }
 
     /** 根据表单配置、表单字段配置，将 文件ID扩展成ID与文件名称 */

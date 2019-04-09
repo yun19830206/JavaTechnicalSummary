@@ -41,6 +41,7 @@
           <include refid="Base_Column_List" />
         from pub_table_column
         where table_id = #{formid}
+        order by col_seq
     </select>
 
 

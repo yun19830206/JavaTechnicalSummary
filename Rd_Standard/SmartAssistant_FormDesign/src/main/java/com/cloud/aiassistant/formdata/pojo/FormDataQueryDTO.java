@@ -14,16 +14,16 @@ import java.util.Map;
 @Data
 public class FormDataQueryDTO {
 
-    /** 待查询 配置表的ID */
+    /** [必填]待查询 配置表的ID */
     private Long tableId ;
 
-    /** 待查询 配置表名 */
+    /** [必填]待查询 配置表名 */
     private String tableName ;
 
-    /** 待查询的数据IDList */
+    /** [选填]待查询的数据IDList */
     private List<Long> dataIdList ;
 
-    /** 待查询 userId创建的数据 与 授权给 userId的数据 */
+    /** [必填]待查询 userId创建的数据 与 授权给 userId的数据 */
     private Long userId ;
 
     /** 实际选择的业务查询条件 */

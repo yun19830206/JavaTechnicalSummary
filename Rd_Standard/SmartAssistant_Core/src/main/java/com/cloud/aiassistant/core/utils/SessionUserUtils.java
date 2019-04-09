@@ -19,16 +19,18 @@ public class SessionUserUtils {
      * @return
      */
     public static User getUserFromSession(HttpSession session){
-        if(null == session){return null ;}
+        if (null == session) {
+            return null;
+        }
 
         User user = null;
         //1:从 普通登入Session中获得User对象
-        user=(User) session.getAttribute(User.SESSION_KEY_USER);
-        if(null != user){
-            return user ;
+        user = (User) session.getAttribute(User.SESSION_KEY_USER);
+        if (null != user) {
+            return user;
         }
         //2:从 微信授权Session中获得User对象
-        user=(User) session.getAttribute(User.SESSION_KEY_WX_USER);
-        return user ;
+        user = (User) session.getAttribute(User.SESSION_KEY_WX_USER);
+        return user;
     }
 }

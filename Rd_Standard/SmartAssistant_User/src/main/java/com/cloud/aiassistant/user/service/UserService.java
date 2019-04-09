@@ -3,6 +3,7 @@ package com.cloud.aiassistant.user.service;
 import com.cloud.aiassistant.core.utils.EncryptionUtils;
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.core.wxsdk.WxApiComponent;
+import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.user.User;
 import com.cloud.aiassistant.user.dao.UserMapper;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户Service
@@ -33,6 +36,9 @@ public class UserService {
 
     @Autowired
     private HttpSession session ;
+
+    /** 缓存已有用户信息，不需要密码，仅用于根据ID，获得常用用户名等信息。 切记有人员删除、更新的时候，此Map要更新 */
+    private Map<Long,User> userMapCache = new HashMap<>();
 
 
     /**
@@ -117,5 +123,31 @@ public class UserService {
         //去除敏感信息
         userList.forEach(user -> user.setPassword("******"));
         return userList;
+    }
+
+    /** 根据用户ID，获得用户对象 */
+    public User getUserById(Long userId){
+        if(userMapCache.size()<1){
+            getAllUserMapCache();
+        }
+        return userMapCache.get(userId);
+    }
+
+    /** 修改密码功能 */
+    public void updatePassword(String newPassword) throws Exception {
+        if(null == newPassword || newPassword.length() < 1){
+            return ;
+        }
+        //获得当前登入用户ID，操作数据库，直接修改密码  TODO
+        User user = SessionUserUtils.getUserFromSession(session);
+        String passwordEncode = EncryptionUtils.getMD5EncryptString(newPassword);
+        userDao.updatePassword(user.getId(),passwordEncode);
+        return;
+    }
+
+    /** 初始化所有用户缓存Map数据 */
+    private void getAllUserMapCache() {
+        List<User> userList = this.listAllUsers();
+        userList.forEach(user -> userMapCache.put(user.getId(),user));
     }
 }

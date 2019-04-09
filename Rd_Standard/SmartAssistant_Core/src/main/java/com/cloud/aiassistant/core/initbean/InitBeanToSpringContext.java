@@ -1,22 +1,12 @@
 package com.cloud.aiassistant.core.initbean;
 
+import com.cloud.aiassistant.core.config.WxMappingJackson2HttpMessageConverter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.FormHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 初始化Bean工作(尤其是那些不愿意通过XML配置方式启动的Bean)

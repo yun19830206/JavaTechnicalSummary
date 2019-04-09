@@ -1,4 +1,4 @@
-package com.cloud.aiassistant.core.initbean;
+package com.cloud.aiassistant.core.config;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;

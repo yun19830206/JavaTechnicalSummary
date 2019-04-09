@@ -74,5 +74,23 @@ public class UserController {
         return AjaxResponse.success(userList);
     }
 
+    /**
+     * 修改本人密码功能
+     */
+    @RequestMapping("/change/password")
+    public AjaxResponse updatePassword(String newPassword){
+        if(null == newPassword || newPassword.length() < 1){
+            return AjaxResponse.failed(null,"待修改密码不能为空");
+        }
+        try {
+            userService.updatePassword(newPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResponse.failed(null,"密码加密失败");
+        }
+        return AjaxResponse.success(null,"密码修改成功");
+    }
+
+
 
 }
