@@ -17,6 +17,7 @@ public class TableColumnConfig {
     /** 创建表单的时候：每个表单默认增加 create_user、create_time、tenant_id3个 */
     public static final String DEFAULT_COLUMN_CREATE_USER = "create_user";
     public static final String DEFAULT_COLUMN_CREATE_TIME = "create_time";
+    public static final String DEFAULT_COLUMN_UPDATE_TIME = "update_time";
     public static final String DEFAULT_COLUMN_TENANT_ID = "tenant_id";
     public static final String DEFAULT_COLUMN_DISPLAY_CUREATE_USER_NAME = "create_user_name";
 

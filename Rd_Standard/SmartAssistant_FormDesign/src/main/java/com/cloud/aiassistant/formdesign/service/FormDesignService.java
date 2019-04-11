@@ -87,17 +87,20 @@ public class FormDesignService {
             //获得表单配置数据，表单字段配置数据，表单查询条件数据，表单展示结果数据，进行拼接成FormDesignVO
             TableConfig tableConfig = tableConfigDao.selectByPrimaryKey(formid);
             List<TableColumnConfig> tableColumnConfigList = tableColumnConfigDao.selectByFormId(formid);
-            //默认在字段配置数据中，增加一个创建人配置数据
-            tableColumnConfigList.add(createDefaultCreateUserConlmnConfig(tableConfig));
+            //默认在字段配置数据中，增加一个创建人(创建时间、更新时间不需要，通过配置字段搞定) 配置数据
+            createDefaultColumnConfig(tableColumnConfigList,tableConfig);
             List<TableQueryConfig> tableQueryConfigList = tableQueryConfigDao.selectByFormId(formid);
             List<TableDisplayConfig> tableDisplayConfigs = tableDisplayConfigDao.selectByFormId(formid);
-            //默认在展示字段中，将创建人展示出来
-            tableDisplayConfigs.add(0,createDefaultCreateUserDisplayColumn(tableColumnConfigList.get(tableColumnConfigList.size()-1)));
+            //默认在展示字段中，将创建人、创建时间、更新时间、展示出来
+            createDefaultDisplayColumn(tableDisplayConfigs,tableColumnConfigList);
+            //tableDisplayConfigs.add(0,createDefaultCreateUserDisplayColumn(tableColumnConfigList.get(tableColumnConfigList.size()-1)));
             formDesignVO = FormDesignUtils.transTableDesignConfigToFormDesignVO(tableConfig, tableColumnConfigList, tableQueryConfigList, tableDisplayConfigs);
             tableDesignVoCacheNMap.put(formid,formDesignVO);
         }
         return formDesignVO ;
     }
+
+
 
 
     /** 根据本表单的字段配置信息，获得本表单所有外键引用的值List */
@@ -208,12 +211,12 @@ public class FormDesignService {
         tableDesignVoCacheNMap = new ConcurrentHashMap<>();
     }
 
-    /** 给tableConfig 创建一个默认的创建人熟悉配置 */
-    private TableColumnConfig createDefaultCreateUserConlmnConfig(TableConfig tableConfig) {
+    /** 给tableConfig 创建一个默认的创建人、创建时间、更新时间熟悉配置 */
+    private void createDefaultColumnConfig(List<TableColumnConfig> tableColumnConfigList, TableConfig tableConfig) {
         TableColumnConfig createUserNameColumnConfig = new TableColumnConfig();
         createUserNameColumnConfig.setChineseName("创建人");
         createUserNameColumnConfig.setColLength(32);
-        createUserNameColumnConfig.setColSeq(99);
+        createUserNameColumnConfig.setColSeq(990);
         createUserNameColumnConfig.setColType(TableColumnTypeEnum.COLUMN_SIGN_LINE_TEXT);
         createUserNameColumnConfig.setDisplayColumn(0);
         createUserNameColumnConfig.setEmpty(1);
@@ -221,8 +224,69 @@ public class FormDesignService {
         createUserNameColumnConfig.setTableId(tableConfig.getId());
         createUserNameColumnConfig.setUniqued(0);
         createUserNameColumnConfig.setTenantId(tableConfig.getTenantId());
-        createUserNameColumnConfig.setId(99L);
-        return createUserNameColumnConfig ;
+        createUserNameColumnConfig.setId(990L);
+        tableColumnConfigList.add(createUserNameColumnConfig);
+
+        TableColumnConfig createDateColumnConfig = new TableColumnConfig();
+        createDateColumnConfig.setChineseName("创建时间");
+        createDateColumnConfig.setColLength(32);
+        createDateColumnConfig.setColSeq(991);
+        createDateColumnConfig.setColType(TableColumnTypeEnum.COLUMN_DATE_TIME);
+        createDateColumnConfig.setDisplayColumn(0);
+        createDateColumnConfig.setEmpty(1);
+        createDateColumnConfig.setEnglishName("create_time");
+        createDateColumnConfig.setTableId(tableConfig.getId());
+        createDateColumnConfig.setUniqued(0);
+        createDateColumnConfig.setTenantId(tableConfig.getTenantId());
+        createDateColumnConfig.setId(991L);
+        tableColumnConfigList.add(createDateColumnConfig);
+
+        TableColumnConfig updateDateColumnConfig = new TableColumnConfig();
+        updateDateColumnConfig.setChineseName("更新时间");
+        updateDateColumnConfig.setColLength(32);
+        updateDateColumnConfig.setColSeq(992);
+        updateDateColumnConfig.setColType(TableColumnTypeEnum.COLUMN_DATE_TIME);
+        updateDateColumnConfig.setDisplayColumn(0);
+        updateDateColumnConfig.setEmpty(1);
+        updateDateColumnConfig.setEnglishName("update_time");
+        updateDateColumnConfig.setTableId(tableConfig.getId());
+        updateDateColumnConfig.setUniqued(0);
+        updateDateColumnConfig.setTenantId(tableConfig.getTenantId());
+        updateDateColumnConfig.setId(992L);
+        tableColumnConfigList.add(updateDateColumnConfig);
+    }
+
+    /** 默认在展示字段中，将创建人、创建时间、更新时间、展示出来(暂时不需要) */
+    private void createDefaultDisplayColumn(List<TableDisplayConfig> tableDisplayConfigList,List<TableColumnConfig> tableColumnConfigList){
+        TableColumnConfig displayNameColumnConfig = tableColumnConfigList.get(tableColumnConfigList.size()-3);
+        TableDisplayConfig createUserDisplayconfig = new TableDisplayConfig();
+        createUserDisplayconfig.setTableColumnConfig(displayNameColumnConfig);
+        createUserDisplayconfig.setTableColumn(displayNameColumnConfig.getId());
+        createUserDisplayconfig.setDisplaySeq(0);
+        createUserDisplayconfig.setId(990L);
+        createUserDisplayconfig.setTableId(displayNameColumnConfig.getTableId());
+        createUserDisplayconfig.setTenantId(displayNameColumnConfig.getTenantId());
+        tableDisplayConfigList.add(0,createUserDisplayconfig);
+
+        TableColumnConfig createTimeColumnConfig = tableColumnConfigList.get(tableColumnConfigList.size()-2);
+        TableDisplayConfig createTimeDisplayConfig = new TableDisplayConfig();
+        createTimeDisplayConfig.setTableColumnConfig(createTimeColumnConfig);
+        createTimeDisplayConfig.setTableColumn(createTimeColumnConfig.getId());
+        createTimeDisplayConfig.setDisplaySeq(0);
+        createTimeDisplayConfig.setId(991L);
+        createTimeDisplayConfig.setTableId(createTimeColumnConfig.getTableId());
+        createTimeDisplayConfig.setTenantId(createTimeColumnConfig.getTenantId());
+        tableDisplayConfigList.add(createTimeDisplayConfig);
+
+        TableColumnConfig updateTimeColumnConfig = tableColumnConfigList.get(tableColumnConfigList.size()-1);
+        TableDisplayConfig updateTimeDisplayConfig = new TableDisplayConfig();
+        updateTimeDisplayConfig.setTableColumnConfig(updateTimeColumnConfig);
+        updateTimeDisplayConfig.setTableColumn(updateTimeColumnConfig.getId());
+        updateTimeDisplayConfig.setDisplaySeq(0);
+        updateTimeDisplayConfig.setId(992L);
+        updateTimeDisplayConfig.setTableId(updateTimeColumnConfig.getTableId());
+        updateTimeDisplayConfig.setTenantId(updateTimeColumnConfig.getTenantId());
+        tableDisplayConfigList.add(updateTimeDisplayConfig);
     }
 
     /** 创建默认创建人展示字段 */

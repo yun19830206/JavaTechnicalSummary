@@ -10,6 +10,7 @@
 		<module>SmartAssistant_FormDesign</module>
 		<module>Standard_Stagging</module>
 		<module>SmartAssistant_Web</module>
+		<module>SmartAssistant_Business</module>
 	</modules>
 
 	<parent>

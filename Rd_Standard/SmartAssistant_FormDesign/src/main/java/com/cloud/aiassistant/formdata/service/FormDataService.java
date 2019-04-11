@@ -175,6 +175,9 @@ public class FormDataService {
             if (TableColumnConfig.DEFAULT_COLUMN_CREATE_TIME.equals(oneColumnValue.getColumnName())) {
                 iterator.remove();
             }
+            if (TableColumnConfig.DEFAULT_COLUMN_UPDATE_TIME.equals(oneColumnValue.getColumnName())) {
+                iterator.remove();
+            }
             if (TableColumnConfig.DEFAULT_COLUMN_TENANT_ID.equals(oneColumnValue.getColumnName())) {
                 iterator.remove();
             }
