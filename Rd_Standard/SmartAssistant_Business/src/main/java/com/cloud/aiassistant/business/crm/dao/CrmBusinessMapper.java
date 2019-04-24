@@ -23,4 +23,7 @@ public interface CrmBusinessMapper {
     List<Long> selectContactIdListByCustomerId(@Param("crmContactTableName") String crmContactTableName,
                                                @Param("customerId") Long customerId,
                                                @Param("contactCustomerFkName") String contactCustomerFkName);
+
+    /** 根据拜访记录信息，更新CRM客户的更新时间 */
+    void updateCrmCustomerUpdateTime();
 }

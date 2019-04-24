@@ -44,7 +44,7 @@
     limit 1
   </select>
 
-  <select id="listAllUser" resultType="com.cloud.aiassistant.pojo.user.User">
+  <select id="listTenantAllUser" resultType="com.cloud.aiassistant.pojo.user.User">
     select
     <include refid="Base_Column_List" />
     from pub_user

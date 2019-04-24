@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 */
 @Service
 @Slf4j
+@Transactional
 public class FileService {
 	
 
@@ -43,7 +44,6 @@ public class FileService {
 	 * @param originalFile 文件
 	 * @return PublicFile
 	 */
-	@Transactional
 	public PublicFile addFile(MultipartFile originalFile) throws IOException {
 		if(null == originalFile){
 			return null ;

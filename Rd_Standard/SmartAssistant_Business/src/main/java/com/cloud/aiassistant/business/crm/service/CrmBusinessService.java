@@ -3,6 +3,7 @@ package com.cloud.aiassistant.business.crm.service;
 import com.cloud.aiassistant.business.crm.dao.CrmBusinessMapper;
 import com.cloud.aiassistant.business.crm.pojo.CrmCustomerVO;
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
+import com.cloud.aiassistant.core.wxsdk.WxApiComponent;
 import com.cloud.aiassistant.formdata.dao.FormDataMapper;
 import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
 import com.cloud.aiassistant.formdata.service.FormDataService;
@@ -10,9 +11,11 @@ import com.cloud.aiassistant.formdesign.pojo.FormDesignVO;
 import com.cloud.aiassistant.formdesign.service.FormDesignService;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
 import com.cloud.aiassistant.pojo.user.User;
+import com.cloud.aiassistant.pojo.wxsdh.WxPushMessageResonseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ import java.util.Map;
  * @date 2019/3/24  Vesion 1.0
  */
 @Service
+@Transactional
 public class CrmBusinessService {
 
     @Value("${crm.table.design.customer:1}")
@@ -68,6 +72,8 @@ public class CrmBusinessService {
 
     @Autowired
     private HttpSession session ;
+
+
 
     /**
      * 根据客户唯一标识，获得我的客户信息：客户、联系人、项目
@@ -157,4 +163,11 @@ public class CrmBusinessService {
 
         return returnOneKeyValueMapList;
     }
+
+    /** 根据拜访记录信息，更新CRM客户的更新时间 */
+    public void updateCrmCustomerUpdateTime() {
+        crmBusinessDao.updateCrmCustomerUpdateTime();
+    }
+
+
 }

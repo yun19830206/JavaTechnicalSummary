@@ -93,7 +93,6 @@ public class FormDesignService {
             List<TableDisplayConfig> tableDisplayConfigs = tableDisplayConfigDao.selectByFormId(formid);
             //默认在展示字段中，将创建人、创建时间、更新时间、展示出来
             createDefaultDisplayColumn(tableDisplayConfigs,tableColumnConfigList);
-            //tableDisplayConfigs.add(0,createDefaultCreateUserDisplayColumn(tableColumnConfigList.get(tableColumnConfigList.size()-1)));
             formDesignVO = FormDesignUtils.transTableDesignConfigToFormDesignVO(tableConfig, tableColumnConfigList, tableQueryConfigList, tableDisplayConfigs);
             tableDesignVoCacheNMap.put(formid,formDesignVO);
         }

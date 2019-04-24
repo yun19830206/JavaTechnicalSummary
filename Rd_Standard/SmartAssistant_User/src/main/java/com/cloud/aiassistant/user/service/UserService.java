@@ -3,7 +3,6 @@ package com.cloud.aiassistant.user.service;
 import com.cloud.aiassistant.core.utils.EncryptionUtils;
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.core.wxsdk.WxApiComponent;
-import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.user.User;
 import com.cloud.aiassistant.user.dao.UserMapper;
@@ -14,9 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 用户Service
@@ -38,7 +38,7 @@ public class UserService {
     private HttpSession session ;
 
     /** 缓存已有用户信息，不需要密码，仅用于根据ID，获得常用用户名等信息。 切记有人员删除、更新的时候，此Map要更新 */
-    private Map<Long,User> userMapCache = new HashMap<>();
+    private Map<Long,User> userMapCache = new ConcurrentHashMap<>();
 
 
     /**
@@ -117,12 +117,25 @@ public class UserService {
 
     /** 返回本租户的所有用户信息 */
     public List<User> listAllUsers() {
-        User logineduser = SessionUserUtils.getUserFromSession(session) ;
-        List<User> userList = userDao.listAllUser(logineduser.getTenantId());
-
-        //去除敏感信息
-        userList.forEach(user -> user.setPassword("******"));
+        if(null == userMapCache || userMapCache.size()<1){
+            getAllUserMapCache();
+        }
+        List<User> userList = new ArrayList<>();
+        userMapCache.forEach((userId,user) -> userList.add(user));
         return userList;
+    }
+
+    /** 初始化所有用户缓存Map数据 */
+    private void getAllUserMapCache() {
+        userMapCache.clear();
+
+        User logineduser = SessionUserUtils.getUserFromSession(session) ;
+        List<User> userList = userDao.listTenantAllUser(logineduser.getTenantId());
+        //去除敏感信息
+        userList.forEach(user -> {
+            user.setPassword("******");
+            userMapCache.put(user.getId(),user);
+        });
     }
 
     /** 根据用户ID，获得用户对象 */
@@ -145,9 +158,8 @@ public class UserService {
         return;
     }
 
-    /** 初始化所有用户缓存Map数据 */
-    private void getAllUserMapCache() {
-        List<User> userList = this.listAllUsers();
-        userList.forEach(user -> userMapCache.put(user.getId(),user));
+    /** 清除所有用户缓存数据 */
+    public void clearAllUserMapCache(){
+        userMapCache = new ConcurrentHashMap<>();
     }
 }

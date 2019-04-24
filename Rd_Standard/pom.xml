@@ -49,6 +49,8 @@
 		<!-- lombok简洁代码 -->
 		<lombok-verison>1.18.4</lombok-verison>
 
+		<fastjson-version>1.2.56</fastjson-version>
+
 		<lucene-version>7.6.0</lucene-version>
 		<hanlp-version>portable-1.7.1</hanlp-version>
 		<lucense-hanlp-plugin-version>1.1.6</lucense-hanlp-plugin-version>
@@ -95,6 +97,12 @@
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${commons-io-version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson-version}</version>
 			</dependency>
 
 
@@ -190,6 +198,11 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
 		</dependency>
 
 		<dependency>

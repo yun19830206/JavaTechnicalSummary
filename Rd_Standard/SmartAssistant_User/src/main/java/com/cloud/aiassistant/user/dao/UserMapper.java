@@ -25,7 +25,7 @@ public interface UserMapper {
     User selectByOpenid(@Param("openid") String openid);
 
     /** 返回本租户的所有用户信息 */
-    List<User> listAllUser(@Param("tenantId") Long tenantId);
+    List<User> listTenantAllUser(@Param("tenantId") Long tenantId);
 
     /** 修改用户密码 */
     void updatePassword(@Param("userId") Long userId, @Param("password") String password);

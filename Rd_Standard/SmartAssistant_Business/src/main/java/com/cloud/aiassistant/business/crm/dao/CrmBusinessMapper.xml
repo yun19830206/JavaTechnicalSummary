@@ -2,6 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cloud.aiassistant.business.crm.dao.CrmBusinessMapper" >
 
+    <update id="updateCrmCustomerUpdateTime">
+        update crm_customer a
+          set a.update_time = (select max(cb.create_time) from crm_project bb , crm_project_visit cb where cb.project_name = bb.id and bb.compange_name = a.id)
+        where exists(select 1 from crm_project b , crm_project_visit c where c.project_name = b.id and b.compange_name = a.id and a.update_time &lt; c.create_time)
+    </update>
+
 
     <select id="selectProjectIdListByCustomerId" resultType="java.lang.Long">
         select

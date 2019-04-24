@@ -6,6 +6,7 @@ import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.formdesign.TableConfig;
 import com.cloud.aiassistant.pojo.formdesign.TableDesignAuth;
+import com.cloud.aiassistant.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,9 @@ public class FormDesignController {
 
     @Autowired
     private FormDesignService formDesignService ;
+
+    @Autowired
+    private UserService userService ;
 
     /**
      * 获得我创建的表单配置数据
@@ -55,6 +59,7 @@ public class FormDesignController {
     @RequestMapping("/cache/reflash")
     public AjaxResponse reflashFormdesignCache(){
         formDesignService.reflashFormdesignCache();
+        userService.clearAllUserMapCache();
         return AjaxResponse.success();
     }
 

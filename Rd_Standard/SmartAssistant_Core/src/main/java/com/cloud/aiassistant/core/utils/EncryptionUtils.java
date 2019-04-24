@@ -35,6 +35,10 @@ public class EncryptionUtils {
     public static void main(String[] args) {
         try {
             System.out.println(EncryptionUtils.getMD5EncryptString("123123"));
+            System.out.println(System.currentTimeMillis());
+            Thread.sleep(5000);
+            System.out.println(System.currentTimeMillis());
+            System.currentTimeMillis();
         } catch (Exception e) {
             e.printStackTrace();
         }
