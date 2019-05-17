@@ -1,7 +1,7 @@
 package com.cloud.aiassistant.stagging.web;
 
 
-import com.cloud.aiassistant.stagging.pojo.AjaxResponse;
+import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.stagging.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

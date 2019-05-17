@@ -2,7 +2,7 @@ package com.cloud.aiassistant.stagging;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.cloud.aiassistant.stagging.pojo.AjaxResponse;
+import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.stagging.pojo.User;
 
 /**
