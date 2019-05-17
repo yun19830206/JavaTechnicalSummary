@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  * @date 2019/3/7 Version 1
  */
 @Data
-public class TableConfig {
+public class TableConfig implements Comparable<TableConfig> {
 
     /** 主键ID */
     private Long id;
@@ -21,6 +21,9 @@ public class TableConfig {
     /** 表格英文名称 */
     private String englishName;
 
+    /** 表单数据是否能修改：1能修改，0不能修改(默认不能修改) */
+    private Integer canEdit;
+
     /** 创建用户 */
     private Long createUser;
 
@@ -30,5 +33,10 @@ public class TableConfig {
     /** 租户ID */
     private Long tenantId;
 
+    @Override
+    public int compareTo(TableConfig o) {
 
+        Long compareResult = this.id - o.id;
+        return compareResult.intValue();
+    }
 }

@@ -18,6 +18,9 @@ public class FormRowDataDTO {
     /** 待查询 配置表名 */
     private String tableName ;
 
+    /** 待更新 数据的主键ID */
+    private Long dataId ;
+
     /** 待查询的数据IDList */
     private List<OneColumnValue> columnValueList ;
 

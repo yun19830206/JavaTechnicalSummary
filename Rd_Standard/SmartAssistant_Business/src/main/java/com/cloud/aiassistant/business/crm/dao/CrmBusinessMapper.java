@@ -26,4 +26,16 @@ public interface CrmBusinessMapper {
 
     /** 根据拜访记录信息，更新CRM客户的更新时间 */
     void updateCrmCustomerUpdateTime();
+
+    /** 转移拜访记录数据 */
+    void transVisitorToUser(@Param("customerId")Long customerId, @Param("toUserId")Long toUserId);
+
+    /** 转移联系人数据 */
+    void transConnectorToUser(@Param("customerId")Long customerId, @Param("toUserId")Long toUserId);
+
+    /** 转移项目数据 */
+    void transProjectToUser(@Param("customerId")Long customerId, @Param("toUserId")Long toUserId);
+
+    /** 转移客户数据 */
+    void transCustomerToUser(@Param("customerId")Long customerId, @Param("toUserId")Long toUserId);
 }

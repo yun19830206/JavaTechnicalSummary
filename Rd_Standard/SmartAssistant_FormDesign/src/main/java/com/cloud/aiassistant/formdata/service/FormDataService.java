@@ -1,15 +1,13 @@
 package com.cloud.aiassistant.formdata.service;
 
+import com.cloud.aiassistant.core.exception.FormDesignBusinessException;
 import com.cloud.aiassistant.core.utils.PageHelperUtils;
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.enums.formdesign.TableColumnTypeEnum;
 import com.cloud.aiassistant.file.dao.FileMapper;
 import com.cloud.aiassistant.formdata.dao.FormDataMapper;
 import com.cloud.aiassistant.formdata.dao.TableDataAuthMapper;
-import com.cloud.aiassistant.formdata.pojo.FormDataJudgeDuplicateQueryDTO;
-import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
-import com.cloud.aiassistant.formdata.pojo.FormRowDataDTO;
-import com.cloud.aiassistant.formdata.pojo.OneColumnValue;
+import com.cloud.aiassistant.formdata.pojo.*;
 import com.cloud.aiassistant.formdesign.pojo.*;
 import com.cloud.aiassistant.formdesign.service.FormDesignService;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
@@ -185,10 +183,13 @@ public class FormDataService {
                 iterator.remove();
             }
         }
-        User user = SessionUserUtils.getUserFromSession(session);
-        formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_CREATE_USER,user.getId()+""));
-        formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_CREATE_TIME, new Timestamp(System.currentTimeMillis()).toString()));
-        formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_TENANT_ID,user.getTenantId()+""));
+        if(null == formRowDataDTO.getDataId() || formRowDataDTO.getDataId() == 0){
+            User user = SessionUserUtils.getUserFromSession(session);
+            formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_CREATE_USER,user.getId()+""));
+            formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_CREATE_TIME, new Timestamp(System.currentTimeMillis()).toString()));
+            formRowDataDTO.getColumnValueList().add(new OneColumnValue(TableColumnConfig.DEFAULT_COLUMN_TENANT_ID,user.getTenantId()+""));
+        }
+
         return formRowDataDTO;
     }
 
@@ -358,5 +359,40 @@ public class FormDataService {
 
         User user = SessionUserUtils.getUserFromSession(session);
         return tableDataAuthDao.selectByUserIdAndTableId(user.getId(), tableId);
+    }
+
+    /** 修改一个表单数据 */
+    public CommonSuccessOrFail modifyFormOneRowData(FormRowDataDTO formRowDataDTO) {
+        //1:验证核心参数是否具备
+        if(null == formRowDataDTO || null == formRowDataDTO.getTableId()
+                || formRowDataDTO.getTableId()<1 || null == formRowDataDTO.getColumnValueList()
+                || null == formRowDataDTO.getDataId() ){
+            return CommonSuccessOrFail.fail("参数错误");
+        }
+        FormDesignVO formDesignVO = formDesignService.getFormDesignConfigWithoutExtendData(formRowDataDTO.getTableId());
+        //2:根据表单配置数据类型和值，校验数据合法性
+        CommonSuccessOrFail commonSuccessOrFail = this.validateFormData(formDesignVO,formRowDataDTO);
+        if(CommonSuccessOrFail.CODE_ERROR == commonSuccessOrFail.getResultCode()){
+            return commonSuccessOrFail ;
+        }
+        //3:设置正确的默认属性(创建人、创建时间、租户ID)
+        formRowDataDTO = this.setFormOneRowDataDefaultValue(formRowDataDTO);
+
+        //4:去除前端传入的，可能会有FormRowDataDTO.columnValueList[0].columnValue 为空的情况
+        this.clearnNullColumnData(formRowDataDTO);
+
+        //5:保存数据
+        formDataDao.modifyFormOneRowData(formRowDataDTO);
+
+        return CommonSuccessOrFail.success("修改成功");
+    }
+
+    /** [已赋权数据--表单数据]获得表单数据 已经赋权给其他人员的信息 */
+    public void transDataToUser(TransferDataDTO transferDataDTO) {
+        if(null == transferDataDTO || transferDataDTO.getDataId() < 0 || null == transferDataDTO.getTableName() || transferDataDTO.getToUserId() < 0 ){
+            throw new FormDesignBusinessException("核心参数为空，请审核");
+        }
+
+        formDataDao.transDataToUser(transferDataDTO);
     }
 }

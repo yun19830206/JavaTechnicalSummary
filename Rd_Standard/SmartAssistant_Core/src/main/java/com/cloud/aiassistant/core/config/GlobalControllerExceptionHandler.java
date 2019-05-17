@@ -22,12 +22,13 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler({Exception.class})
     @ResponseBody
     public AjaxResponse handleException(Exception e) {
-        log.error(e.getMessage());
-        // 如下的打印日志堆栈信息，没用，可能exception已经被切面包裹的原因。
-        e.printStackTrace();
+        log.error("全局异常处理，异常为：",e);
         String exceptionMessage = e.getMessage();
-        if(exceptionMessage.length()>100){
+        if(null != exceptionMessage && exceptionMessage.length()>100){
             exceptionMessage = exceptionMessage.substring(0,100);
+        }
+        if(null == exceptionMessage || exceptionMessage.length()<1 ){
+            exceptionMessage = "后台服务器异常，请联系管理员";
         }
         return AjaxResponse.failed(null, exceptionMessage);
     }

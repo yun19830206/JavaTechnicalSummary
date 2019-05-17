@@ -1,6 +1,7 @@
 package com.cloud.aiassistant.user.web;
 
 
+import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.user.User;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -60,6 +62,20 @@ public class UserController {
         User user = userService.getWxUser(openid);
         if(null == user){
             return AjaxResponse.failed(null,"不存在此用户");
+        }else{
+            return AjaxResponse.success(user);
+        }
+    }
+
+    /**
+     * 根据微信openid获得User对象。 用于给机器人做第三方认证使用。
+     * post方式(Content-Type: application/json) 可以获得参数的值, 或者Get方式
+     */
+    @RequestMapping("/get/loginuser")
+    public AjaxResponse getLoginWxUser(HttpServletRequest request){
+        User user = SessionUserUtils.getUserFromSession(request.getSession());
+        if(null == user){
+            return AjaxResponse.failed(null,"用户未登入");
         }else{
             return AjaxResponse.success(user);
         }

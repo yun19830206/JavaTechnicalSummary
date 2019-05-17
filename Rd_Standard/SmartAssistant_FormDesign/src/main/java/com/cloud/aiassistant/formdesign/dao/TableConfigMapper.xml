@@ -3,14 +3,15 @@
 <mapper namespace="com.cloud.aiassistant.formdesign.dao.TableConfigMapper">
 
     <sql id="Base_Column_List">
-        id, chinese_name, english_name, create_user, create_time, tenant_id
+        id, chinese_name, english_name, can_edit, create_user, create_time, tenant_id
     </sql>
 
     <insert id="insert" parameterType="com.cloud.aiassistant.pojo.formdesign.TableConfig">
-        INSERT INTO pub_table_conf (chinese_name, english_name,
+        INSERT INTO pub_table_conf (chinese_name, english_name, can_edit,
                                     create_user, create_time, tenant_id)
         VALUES (#{chineseName},
                 #{englishName},
+                #{canEdit},
                 #{createUser},
                 #{createTime},
                 #{tenantId}
@@ -29,6 +30,7 @@
           <include refid="Base_Column_List"/>
         from pub_table_conf
         where create_user = #{userId}
+        order by id
     </select>
 
     <select id="selectAuthToMeTableConfig" resultType="com.cloud.aiassistant.pojo.formdesign.TableConfig" parameterType="java.lang.Long">
@@ -37,6 +39,7 @@
         from pub_table_conf
         where exists(select 1 from pub_auth_form b
                         where pub_table_conf.id = b.table_id and b.user_id = #{autoToUserId})
+        order by id
     </select>
 
 </mapper>

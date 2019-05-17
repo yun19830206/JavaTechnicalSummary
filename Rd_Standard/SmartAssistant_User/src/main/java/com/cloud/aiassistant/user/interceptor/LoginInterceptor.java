@@ -1,6 +1,9 @@
 package com.cloud.aiassistant.user.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cloud.aiassistant.core.wxsdk.WxApiComponent;
+import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
 import com.cloud.aiassistant.pojo.user.User;
 import com.cloud.aiassistant.user.service.UserService;
@@ -38,7 +41,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     private String loginUrl;
 
     /** 每个线程的接口开始时间，用于计算接口调用时间 */
-    private static ThreadLocal<Long> startTime = new ThreadLocal<Long>();
+    private static ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     @Autowired
     private WxApiComponent wxApiComponent ;
@@ -64,15 +67,20 @@ public class LoginInterceptor implements HandlerInterceptor {
         //3：如果微信认证在Session中也失败，走微信初次认证逻辑。规律是：在微信H5页面请求的任何一个Ajax接口，都必须在URL的最后带上?wxCode=wxCode
         if(user == null || null == user.getId()){
             String wxCode = request.getParameter("wxCode") ;
-            log.info("走到微信认证逻辑，wxCode=" + wxCode);
+            log.info("走到微信认证逻辑，wxCode={}, URL={}" ,wxCode, request.getRequestURI());
             if(null != wxCode && wxCode.length()>0){
                 user = doWxAuth(wxCode,session);
-                log.info("走到微信认证结果对象user=" + user);
+                log.info("走到微信认证结果对象user={}" ,user);
             }
         }
 
         if(null == user || null == user.getId()){
-            response.sendRedirect(loginUrl);
+            //response.sendRedirect(loginUrl);
+            log.info("url[{}] 需要登入权限，而此请求没有登入，需要先登入。",request.getRequestURI());
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/json;charset=UTF-8");
+            AjaxResponse ajaxResponse = AjaxResponse.failed("null","没有权限，请先登入");
+            response.getWriter().print(JSONObject.toJSONString(ajaxResponse, SerializerFeature.WriteNullStringAsEmpty));
             return false ;
         }
         return true ;

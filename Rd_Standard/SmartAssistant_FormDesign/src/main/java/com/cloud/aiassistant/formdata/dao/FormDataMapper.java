@@ -3,6 +3,7 @@ package com.cloud.aiassistant.formdata.dao;
 import com.cloud.aiassistant.formdata.pojo.FormDataJudgeDuplicateQueryDTO;
 import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
 import com.cloud.aiassistant.formdata.pojo.FormRowDataDTO;
+import com.cloud.aiassistant.formdata.pojo.TransferDataDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -32,4 +33,10 @@ public interface FormDataMapper {
      * @param formRowDataDTO 一个表单的一行数据
      */
     void insertFormOneRowData(FormRowDataDTO formRowDataDTO);
+
+    /**  修改一条表单数据 */
+    void modifyFormOneRowData(FormRowDataDTO formRowDataDTO);
+
+    /** [已赋权数据--表单数据]获得表单数据 已经赋权给其他人员的信息 */
+    void transDataToUser(TransferDataDTO transferDataDTO);
 }

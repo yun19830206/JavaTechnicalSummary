@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cloud.aiassistant.formdata.dao.FormDataMapper" >
 
-
     <select id="selectMyFormDataAndAuthToMeData" resultType="java.util.Map" parameterType="com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO">
         select
             *
@@ -19,7 +18,7 @@
                       #{item}
                     </foreach>
             </if>
-        order by create_time DESC
+        order by create_time DESC,id
     </select>
 
     <select id="selectByTableColumnValue" resultType="java.util.Map">
@@ -41,5 +40,18 @@
             </foreach>
         )
     </insert>
+
+    <update id="modifyFormOneRowData">
+        update ${tableName} set
+            <foreach collection="columnValueList" index="index" item="item" separator=",">
+                ${item.columnName} = #{item.columnValue}
+            </foreach>
+        where id = #{dataId}
+    </update>
+
+    <update id="transDataToUser">
+        update ${tableName} set create_user = #{toUserId}
+        where id = #{dataId}
+    </update>
 
 </mapper>

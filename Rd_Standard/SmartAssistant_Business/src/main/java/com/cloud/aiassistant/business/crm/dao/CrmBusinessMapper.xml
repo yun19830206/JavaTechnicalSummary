@@ -8,7 +8,6 @@
         where exists(select 1 from crm_project b , crm_project_visit c where c.project_name = b.id and b.compange_name = a.id and a.update_time &lt; c.create_time)
     </update>
 
-
     <select id="selectProjectIdListByCustomerId" resultType="java.lang.Long">
         select
             id
@@ -22,6 +21,23 @@
         from ${crmContactTableName}
         where ${contactCustomerFkName} = #{customerId}
     </select>
+
+    <update id="transVisitorToUser">
+        update crm_project_visit a set a.create_user = #{toUserId}
+        where exists(select 1 from crm_project b where a.project_name=b.id and b.compange_name=#{customerId})
+    </update>
+
+    <update id="transConnectorToUser">
+        update crm_project_user set create_user=#{toUserId}  where compange_name =#{customerId}
+    </update>
+
+    <update id="transProjectToUser">
+        update crm_project set create_user=#{toUserId}  where compange_name =#{customerId}
+    </update>
+
+    <update id="transCustomerToUser">
+        update crm_customer set create_user=#{toUserId}  where id =#{customerId}
+    </update>
 
 
 </mapper>

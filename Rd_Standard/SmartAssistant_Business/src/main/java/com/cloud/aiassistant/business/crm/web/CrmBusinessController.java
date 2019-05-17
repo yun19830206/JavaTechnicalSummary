@@ -59,4 +59,14 @@ public class CrmBusinessController {
         return AjaxResponse.success();
     }
 
+    /** CRM一个客户转交给其他人 */
+    @RequestMapping("/crm/trans")
+    public AjaxResponse transCustomerToUser(Long customerId, Long toUserId){
+        if(null == customerId || customerId < 0 || null == toUserId || toUserId < 0 ){
+            return AjaxResponse.failed("核心参数缺失，请联系管理员");
+        }
+        crmBusinessService.transCustomerToUser(customerId,toUserId);
+        return AjaxResponse.success(null,"转交成功");
+    }
+
 }

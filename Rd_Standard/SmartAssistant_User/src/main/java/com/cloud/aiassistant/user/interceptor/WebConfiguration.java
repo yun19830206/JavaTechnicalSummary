@@ -15,18 +15,26 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfiguration implements WebMvcConfigurer {
 
     /** 登入URL */
-    @Value("${login.url:/login.html}")
+    @Value("${login.url:/#/login}")
     private String loginUrl;
 
     @Autowired
     private LoginInterceptor loginInterceptor ;
 
     /**
-     * 重写添加拦截器方法并添加配置拦截器
+     * 重写添加拦截器方法并添加配置拦截器.
+     * /demo/*  代表匹配/demo/下面的第一层目录，无法匹配下面的多级目录。
+     * /demo/** 代表匹配/demo/下面的第一层目录 和 下面任何级子目录。
      * @param registry
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/**").excludePathPatterns("/aiassistant/user/wx/*","/aiassistant/user/login/*","/error",loginUrl);
+        registry.addInterceptor(loginInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(loginUrl)
+                .excludePathPatterns("/error")
+                .excludePathPatterns("/aiassistant/user/wx/*")
+                .excludePathPatterns("/aiassistant/user/login/*")
+                .excludePathPatterns("/demo/web/cache/**");
     }
 }

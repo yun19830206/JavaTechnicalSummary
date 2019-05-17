@@ -11,5 +11,12 @@
 
     <artifactId>standard-stagging</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.cloud.rdstandard</groupId>
+            <artifactId>ai-assistant-pojo</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
 
 </project>

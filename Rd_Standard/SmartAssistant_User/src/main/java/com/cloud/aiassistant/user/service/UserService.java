@@ -151,7 +151,7 @@ public class UserService {
         if(null == newPassword || newPassword.length() < 1){
             return ;
         }
-        //获得当前登入用户ID，操作数据库，直接修改密码  TODO
+
         User user = SessionUserUtils.getUserFromSession(session);
         String passwordEncode = EncryptionUtils.getMD5EncryptString(newPassword);
         userDao.updatePassword(user.getId(),passwordEncode);

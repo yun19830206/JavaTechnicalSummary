@@ -3,6 +3,7 @@ package com.cloud.aiassistant.formdata.web;
 import com.cloud.aiassistant.formdata.pojo.FormDataJudgeDuplicateQueryDTO;
 import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
 import com.cloud.aiassistant.formdata.pojo.FormRowDataDTO;
+import com.cloud.aiassistant.formdata.pojo.TransferDataDTO;
 import com.cloud.aiassistant.formdata.service.FormDataService;
 import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.pojo.common.CommonSuccessOrFail;
@@ -68,6 +69,17 @@ public class FormDataController {
         }
     }
 
+    /** 10-3：[移动PC公用]修改一个表单数据。 */
+    @RequestMapping("/modify/formrowdata")
+    public AjaxResponse modifyFormOneRowData(@RequestBody FormRowDataDTO formRowDataDTO){
+        CommonSuccessOrFail commonSuccessOrFail = formDataService.modifyFormOneRowData(formRowDataDTO);
+        if(CommonSuccessOrFail.CODE_ERROR == commonSuccessOrFail.getResultCode()){
+            return AjaxResponse.failed(null,commonSuccessOrFail.getResultDesc());
+        }else{
+            return AjaxResponse.success(null,commonSuccessOrFail.getResultDesc());
+        }
+    }
+
     /** [赋权功能--数据权限]将我创建的表的数据，付给别人：可看、可改 */
     @RequestMapping("/auth/tabledata")
     public AjaxResponse authTableData(@RequestBody List<TableDataAuth> tableDataAuthList){
@@ -86,7 +98,7 @@ public class FormDataController {
     }
 
 
-    /** [已赋权数据--表单数据]获得当前表单数据，将我表单数据已经赋权给其他人员的信息 */
+    /** [已赋权数据--表单数据]获得表单数据 已经赋权给其他人员的信息 */
     @RequestMapping("/list/authtabledata")
     public AjaxResponse ListAuthTableData(Long tableId){
         if(null == tableId || tableId < 0){
@@ -95,6 +107,17 @@ public class FormDataController {
 
         List<TableDataAuth> tableDataAuthList = formDataService.listAuthTableData(tableId);
         return AjaxResponse.success(tableDataAuthList);
+    }
+
+    /** [已赋权数据--表单数据]获得表单数据 已经赋权给其他人员的信息 */
+    @RequestMapping("/transfer/onedata")
+    public AjaxResponse transDataToUser(@RequestBody TransferDataDTO transferDataDTO){
+        if(null == transferDataDTO || transferDataDTO.getDataId() < 0 || null == transferDataDTO.getTableName() || transferDataDTO.getToUserId() < 0 ){
+            return AjaxResponse.failed("核心参数为空，请审核");
+        }
+
+        formDataService.transDataToUser(transferDataDTO);
+        return AjaxResponse.success(null,"数据转交成功");
     }
 
 }

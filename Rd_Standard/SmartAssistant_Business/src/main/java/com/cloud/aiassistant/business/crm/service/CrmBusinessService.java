@@ -2,6 +2,7 @@ package com.cloud.aiassistant.business.crm.service;
 
 import com.cloud.aiassistant.business.crm.dao.CrmBusinessMapper;
 import com.cloud.aiassistant.business.crm.pojo.CrmCustomerVO;
+import com.cloud.aiassistant.core.exception.FormDesignBusinessException;
 import com.cloud.aiassistant.core.utils.SessionUserUtils;
 import com.cloud.aiassistant.core.wxsdk.WxApiComponent;
 import com.cloud.aiassistant.formdata.dao.FormDataMapper;
@@ -9,6 +10,7 @@ import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
 import com.cloud.aiassistant.formdata.service.FormDataService;
 import com.cloud.aiassistant.formdesign.pojo.FormDesignVO;
 import com.cloud.aiassistant.formdesign.service.FormDesignService;
+import com.cloud.aiassistant.pojo.common.AjaxResponse;
 import com.cloud.aiassistant.pojo.formdesign.TableColumnConfig;
 import com.cloud.aiassistant.pojo.user.User;
 import com.cloud.aiassistant.pojo.wxsdh.WxPushMessageResonseVO;
@@ -169,5 +171,22 @@ public class CrmBusinessService {
         crmBusinessDao.updateCrmCustomerUpdateTime();
     }
 
+    /** CRM一个客户转交给其他人 */
+    public void transCustomerToUser(Long customerId, Long toUserId) {
+        if(null == customerId || customerId < 0 || null == toUserId || toUserId < 0 ){
+            throw new FormDesignBusinessException("核心参数缺失，请联系管理员");
+        }
 
+        //转移拜访记录数据
+        crmBusinessDao.transVisitorToUser(customerId,toUserId);
+
+        //转移联系人数据
+        crmBusinessDao.transConnectorToUser(customerId,toUserId);
+
+        //转移项目数据
+        crmBusinessDao.transProjectToUser(customerId,toUserId);
+
+        //转移客户数据
+        crmBusinessDao.transCustomerToUser(customerId,toUserId);
+    }
 }

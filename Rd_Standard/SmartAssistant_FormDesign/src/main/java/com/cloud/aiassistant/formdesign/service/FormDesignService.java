@@ -146,7 +146,7 @@ public class FormDesignService {
      * @return Set<TableConfig>
      */
     public Set<TableConfig> getMyFormDesign() {
-        Set<TableConfig> myFormDesign = new HashSet<>();
+        Set<TableConfig> myFormDesign = new TreeSet<>();
 
         //获得我创建的,加入到总体结果当中
         User user = SessionUserUtils.getUserFromSession(session);
