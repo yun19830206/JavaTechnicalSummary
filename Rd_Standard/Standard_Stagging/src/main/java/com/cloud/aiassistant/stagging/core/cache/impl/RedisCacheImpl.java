@@ -56,6 +56,7 @@ public class RedisCacheImpl implements ICacheInterface {
 
 
     /************************如下接口非公开，仅用于验证Java存储Redis各种数据特征的功能(一般不开放此种使用方法)*****************/
+    /** TODO 需要把Set List Hash 的放入值Value替换成 String在试试，或者转成JSONString*/
     public void setMapDemo(){
         /** 报错验证不成功：java.lang.ClassCastException: com.cloud.aiassistant.stagging.pojo.User cannot be cast to java.lang.String */
         log.debug("###############验证opsForHash操作Map类型对象##############");
@@ -84,5 +85,6 @@ public class RedisCacheImpl implements ICacheInterface {
         redisTemplate.opsForList().leftPushAll("cache:demo:type:list",(Collection)userList);
         log.debug("获得缓存List对象合集为：{}",redisTemplate.opsForList().leftPop("cache:demo:type:list"));
 
+        redisTemplate.boundSetOps("sdf");
     }
 }

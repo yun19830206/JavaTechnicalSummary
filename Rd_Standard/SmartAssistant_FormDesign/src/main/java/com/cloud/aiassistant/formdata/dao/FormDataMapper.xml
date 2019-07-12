@@ -18,6 +18,17 @@
                       #{item}
                     </foreach>
             </if>
+            <if test="queryCondition != null and queryCondition.size()>0">
+                <foreach collection="queryCondition" index="index" item="item">
+                    <if test=" item.queryColumnType == 'CONDITION_ENUM_LIKE' ">
+                        and ${item.queryColumnName} like CONCAT('%',#{item.queryValue},'%')
+                    </if>
+                    <if test=" item.queryColumnType == 'CONDITION_ENUM_EQUAL' ">
+                        and ${item.queryColumnName} = #{item.queryValue}
+                    </if>
+                </foreach>
+            </if>
+
         order by create_time DESC,id
     </select>
 

@@ -27,7 +27,7 @@ public class FormDataQueryDTO {
     private Long userId ;
 
     /** 实际选择的业务查询条件 */
-    private Map<String,Object> businessQueryConditionMap ;
+    private List<Map<String,Object>> queryCondition ;
 
     public List<Long> getDataIdList() {
         if(null == dataIdList){

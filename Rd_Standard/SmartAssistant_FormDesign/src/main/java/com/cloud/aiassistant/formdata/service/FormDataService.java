@@ -72,7 +72,7 @@ public class FormDataService {
         formDataQueryDTO.setTableName(formDesignVO.getTableConfig().getEnglishName());
         User user = SessionUserUtils.getUserFromSession(session);
         formDataQueryDTO.setUserId(user.getId());
-        //TODO 这里没有做选择的业务查询条件，太复杂，因为业务条件 可能是 大于，可能是等于，也可能是like。 用Map做不到，要封装一个对象：properName,propertyValue,queryType
+        //2：查询条件只处理 文字Like 与 下拉框等于
 
         PageInfo<Map<String,Object>> tableResultPage = PageHelper.startPage(formDataPageParam.getPageNum(),formDataPageParam.getPageSize())
                 .doSelectPageInfo(() -> formDataDao.selectMyFormDataAndAuthToMeData(formDataQueryDTO));

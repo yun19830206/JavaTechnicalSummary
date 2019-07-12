@@ -30,9 +30,6 @@ public class CrmPushMessageService {
     private WxApiComponent wxApiComponent ;
 
     @Autowired
-    private UserService userService ;
-
-    @Autowired
     private UserMapper userDao ;
 
     /** 统一给每一个销售人员，推送及时增加拜访记录 */

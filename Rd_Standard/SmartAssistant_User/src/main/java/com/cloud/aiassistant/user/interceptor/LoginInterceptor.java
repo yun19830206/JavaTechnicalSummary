@@ -79,7 +79,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             log.info("url[{}] 需要登入权限，而此请求没有登入，需要先登入。",request.getRequestURI());
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/json;charset=UTF-8");
-            AjaxResponse ajaxResponse = AjaxResponse.failed("null","没有权限，请先登入");
+            AjaxResponse ajaxResponse = AjaxResponse.noAuth();
             response.getWriter().print(JSONObject.toJSONString(ajaxResponse, SerializerFeature.WriteNullStringAsEmpty));
             return false ;
         }

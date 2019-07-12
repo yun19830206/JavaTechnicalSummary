@@ -22,6 +22,113 @@
         where ${contactCustomerFkName} = #{customerId}
     </select>
 
+    <select id="selectVisitIdListByProjectId" resultType="java.lang.Long">
+        select
+            id
+        from ${crmVisitTableName}
+        where ${visitProjectFkName} = #{projectId}
+    </select>
+
+    <select id="selectCrmCustomerListByCondition" resultType="java.util.Map">
+        select a.id         'id',
+            a.compange_name 'company_name',
+            a.industry_drop 'industry_drop',
+            a.employ_number 'employ_number',
+            a.where_from	'where_from',
+            a.customer_level 'customer_level',
+            a.customer_status 'customer_status',
+            (select b.user_name from pub_user b where a.create_user = b.id) 'create_user',
+            a.create_time 'create_time',
+            a.update_time 'update_time'
+        from crm_customer a
+        where
+            ((create_user = #{userId})
+            or
+            (
+            exists(select 1 from pub_auth_form_data t where t.from_table=1 and a.create_user=t.from_user and t.to_user=#{userId})
+            ))
+        <if test="queryCondition != null and queryCondition.size()>0">
+            <foreach collection="queryCondition" index="index" item="item">
+                <if test=" item.queryColumnType == 'CONDITION_ENUM_LIKE' ">
+                    and ${item.queryColumnName} like CONCAT('%',#{item.queryValue},'%')
+                </if>
+                <if test=" item.queryColumnType == 'CONDITION_ENUM_EQUAL' ">
+                    and ${item.queryColumnName} = #{item.queryValue}
+                </if>
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectCrmProjectListByCustIdList" resultType="java.util.Map">
+        select a.id             'id',
+            b.compange_name		'company_name',
+            a.project_name			'project_name',
+            a.use_range				'use_range',
+            a.use_department		'use_department',
+            a.use_channel			'use_channel',
+            a.compet_vendor		'compet_vendor',
+            a.buy_system				'buy_system',
+            a.pre_company			'pre_company',
+            a.success_probability		'success_probability',
+            a.money									'money',
+            a.start_date							'start_date',
+            a.receive_date						'receive_date',
+            a.contract_amount				'contract_amount',
+            a.deploy_method					'deploy_method',
+            a.project_statu					'project_statu',
+            (select t.user_name from pub_user t where a.create_user = t.id) 'create_user',
+            a.create_time 			'create_time',
+            a.update_time 			'update_time'
+        from crm_project a , crm_customer b
+        where a.compange_name = b.id
+          and b.id in
+                <foreach collection="custIdList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+    </select>
+
+    <select id="selectCrmPersionListByCustIdList" resultType="java.util.Map">
+        select a.id,
+            b.compange_name		'company_name',
+            a.user_name				'user_name',
+            a.user_sex					'user_sex',
+            a.department				'department',
+            a.position					'position',
+            a.phone_number			'phone_number',
+            a.qq_wx						'qq_wx',
+            a.email						'email',
+            a.address					'address',
+            a.age							'age',
+            a.birthday					'birthday',
+            a.hobby						'hobby',
+            (select t.user_name from pub_user t where a.create_user = t.id) 'create_user',
+            a.create_time 			'create_time',
+            a.update_time 			'update_time'
+        from crm_project_user a , crm_customer b
+        where a.compange_name = b.id
+            and b.id in
+            <foreach collection="custIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+    </select>
+
+    <select id="selectCrmVisitListByCustIdList" resultType="java.util.Map">
+        select a.id,
+            b.project_name		  'project_name',
+            c.user_name				'user_name',
+            a.visit_type				'visit_type',
+            a.visit_text				'visit_text',
+            (select t.user_name from pub_user t where a.create_user = t.id) 'create_user',
+            a.create_time 			'create_time',
+            a.update_time 			'update_time'
+        from crm_project_visit a , crm_project b , crm_project_user c
+        where a.project_name = b.id and a.connect_persion = c.id
+            and b.id in
+            <foreach collection="projectIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+    </select>
+
     <update id="transVisitorToUser">
         update crm_project_visit a set a.create_user = #{toUserId}
         where exists(select 1 from crm_project b where a.project_name=b.id and b.compange_name=#{customerId})

@@ -1,14 +1,30 @@
 package com.cloud.aiassistant.business.crm.web;
 
+import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.excel.support.ExcelTypeEnum;
+import com.cloud.aiassistant.business.crm.pojo.CrmCustSheet;
 import com.cloud.aiassistant.business.crm.pojo.CrmCustomerVO;
 import com.cloud.aiassistant.business.crm.service.CrmBusinessService;
 import com.cloud.aiassistant.business.crm.service.CrmPushMessageService;
+import com.cloud.aiassistant.formdata.pojo.FormDataQueryDTO;
 import com.cloud.aiassistant.pojo.common.AjaxResponse;
+import com.cloud.aiassistant.pojo.common.PageParam;
 import com.cloud.aiassistant.pojo.common.PageResult;
+import com.cloud.aiassistant.pojo.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * CRM业务数据Controller
@@ -67,6 +83,43 @@ public class CrmBusinessController {
         }
         crmBusinessService.transCustomerToUser(customerId,toUserId);
         return AjaxResponse.success(null,"转交成功");
+    }
+
+    /** 获得所有CRM销售人员。 */
+    @RequestMapping("/crm/user/list")
+    public AjaxResponse ListCrmUserList(){
+        List<User> crmUserList = crmBusinessService.ListCrmUserList();
+        return AjaxResponse.success(crmUserList,"获得CRM用户信息成功");
+    }
+
+    /** 获得项目下面的拜访记录信息。 */
+    @RequestMapping("/crm/customer/visits")
+    public AjaxResponse ListProjectVisitList(Long projectId){
+        if(null == projectId || projectId.intValue() < 1){
+            return AjaxResponse.failed(null,"参数不合法");
+        }
+        List<List<Map<String,Object>>> visitList = crmBusinessService.ListProjectVisitList(projectId);
+        return AjaxResponse.success(visitList,"获得CRM用户信息成功");
+    }
+
+    /** 导出满足条件的CRM客户数据到Excel当中  */
+    @RequestMapping("/crm/customer/export")
+    public void exportCrmCustomer(@RequestBody FormDataQueryDTO customerQueryDto, HttpServletResponse response) throws IOException {
+        List<CrmCustSheet> crmSheetList = crmBusinessService.exportCrmCustomer(customerQueryDto);
+
+        ServletOutputStream out = response.getOutputStream();
+        response.setContentType("application/x-excel;charset=utf-8");
+        response.setHeader("content-Type", "application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode("CrmDataExport.xlsx", "utf-8"));
+
+        ExcelWriter writer = EasyExcelFactory.getWriter(out) ;
+        crmSheetList.forEach(crmCustSheet -> {
+            writer.write1(crmCustSheet.getSheetData(), crmCustSheet.getSheetHead());
+        });
+        writer.finish();
+
+        out.flush();
     }
 
 }

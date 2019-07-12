@@ -14,6 +14,7 @@ public class AjaxResponse<T> implements Serializable{
     /** 状态码：200 业务成功， 500业务失败 */
     private static final int CODE_SUCCESS = 200 ;
     private static final int CODE_ERROR = 500 ;
+    private static final int CODE_NO_LOGIN = 505 ;
 
     /** 返回结果状态码， 200成功，500内部错误 */
     private int code ;
@@ -63,6 +64,10 @@ public class AjaxResponse<T> implements Serializable{
         return new AjaxResponse<>(CODE_ERROR,message,null,data);
     }
 
+    /** 没有登入 */
+    public static AjaxResponse noAuth() {
+        return new AjaxResponse<>(CODE_NO_LOGIN,null,"没有权限，请先登入",null);
+    }
 
 
     /** ======================如下为较少改动 get set方法区================ */
@@ -87,4 +92,6 @@ public class AjaxResponse<T> implements Serializable{
     public void setData(T data) {
         this.data = data;
     }
+
+
 }
