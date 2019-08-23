@@ -9,11 +9,11 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>jdk8gc</artifactId>
+	<artifactId>TechExp-Jdk7GC</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Jdk7GC</name>
+	<name>TechExp-Jdk7GC</name>
 	<description>验证JDK7在不同GC类型下的接口调用响应时间效果</description>
 
 	<properties>

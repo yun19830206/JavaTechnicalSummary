@@ -9,11 +9,11 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>cyclic</artifactId>
+	<artifactId>TechExp-SpringCyclicDependy</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>SpringCyclicDependence</name>
+	<name>TechExp-SpringCyclicDependy</name>
 	<description>模拟详解Spring循环依赖原理</description>
 
 	<properties>
