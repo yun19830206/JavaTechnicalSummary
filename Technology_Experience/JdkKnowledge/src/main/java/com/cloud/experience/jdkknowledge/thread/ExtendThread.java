@@ -13,7 +13,7 @@ public class ExtendThread extends Thread{
 
     @Override
     public void run() {
-        System.out.println(ExtendThread.class+"开始执行:"+System.currentTimeMillis());
+        System.out.println(Thread.currentThread()+"开始执行:"+System.currentTimeMillis());
     }
 
     public static void main(String[] args) {

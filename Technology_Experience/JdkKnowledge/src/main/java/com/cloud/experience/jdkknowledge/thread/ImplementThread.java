@@ -8,7 +8,7 @@ package com.cloud.experience.jdkknowledge.thread;
 public class ImplementThread implements Runnable{
     @Override
     public void run() {
-        System.out.println(ImplementThread.class+"开始执行:"+System.currentTimeMillis());
+        System.out.println(Thread.currentThread()+"开始执行:"+System.currentTimeMillis());
     }
 
     public static void main(String[] args) {

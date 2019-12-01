@@ -6,7 +6,7 @@
 	<modules>
 		<module>StaggingProject_Pojo</module>
 		<module>StaggingProject_Core</module>
-		<module>StaggingProject_Module_User</module>
+		<module>StaggingProject_Module_Knowledge</module>
 		<module>StaggingProject_Web_Main</module>
 
 		<module>StaggingProject_Web_Job</module>
