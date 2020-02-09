@@ -60,6 +60,7 @@
 		<module>SpringCyclicDependence</module>
 		<module>JdkKnowledge</module>
 		<module>OfficeWordExcel</module>
+		<module>CacheBreakdown</module>
 	</modules>
 
 </project>

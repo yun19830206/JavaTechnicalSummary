@@ -1,0 +1,13 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.experience.cachebreakdown.dao.NationalStandardMapper">
+
+    <select id="selectBookCategrouyCountList" resultType="com.cloud.experience.cachebreakdown.pojo.BookCategrouyCount">
+        select a.book_id,count(1) catecout
+          from tmp_book a, knpc_book b
+        where a.book_id=b.book_id and a.clause_id like '%O%'
+        group by a.book_id order by catecout desc limit 100
+    </select>
+
+
+</mapper>

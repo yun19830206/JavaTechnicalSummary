@@ -2,7 +2,7 @@ package com.cloud.experience.jdkknowledge.hashmap;
 
 import java.util.Map;
 
-/** Jdk8 HashMap 分解详解 */
+/** Jdk8 HashMap 存储结构分解详解 */
 public class HashMapAnalysis<K,V> {
 
     /** Node实现了Map.Entry<K,V>用于数据存储键值对,如果K的hashCode相同,存储在Node实例中链表结构next当中 */
