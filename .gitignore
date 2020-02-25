@@ -8,3 +8,4 @@ mvnw
 mvnw.cmd
 maven-wrapper.jar
 maven-wrapper.properties
+/CacheBreakdown.log.2020-02-24.0.gz

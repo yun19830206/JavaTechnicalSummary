@@ -46,6 +46,7 @@ public class CacheBreakDownController {
         List<BookCategrouyCount> categrouyCount = null ;
         categrouyCount = redisCache.getValue(CACHE_KEY_BOOK_CATEGROUY_COUNT,List.class);
         if(null == categrouyCount){
+            //这里假设了bookCategrouyCountServer.getCategrouyCount();会直接一个慢SQL,导致数据库CPU飙到50%
             categrouyCount = bookCategrouyCountServer.getCategrouyCount();
             redisCache.setValue(CACHE_KEY_BOOK_CATEGROUY_COUNT,categrouyCount,5*60);
         }
