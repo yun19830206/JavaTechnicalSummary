@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.cloud.experience</groupId>
-	<artifactId>cachebreakdown</artifactId>
+	<artifactId>TechExp-CacheBreakeDown</artifactId>
 	<version>1.0</version>
-	<name>cachebreakdown</name>
+	<name>TechExp-CacheBreakeDown</name>
 	<description>模拟复现缓存击穿，并提供解决方案</description>
 
 	<properties>
