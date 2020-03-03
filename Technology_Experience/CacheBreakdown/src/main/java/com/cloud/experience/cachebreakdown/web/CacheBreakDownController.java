@@ -29,7 +29,7 @@ public class CacheBreakDownController {
     private RedisCacheImpl redisCache ;
 
     /** 共有成员变量，用于控制缓存击穿是的细小锁 */
-    private final Object lock = new Object();
+    private final Object cacheKeyLock = new Object();
 
     /** 不适用缓存，每次通过DB查询获得数据 */
     @RequestMapping("/getBookCategrouyCount/v1/directDB")
@@ -64,7 +64,7 @@ public class CacheBreakDownController {
         categrouyCount = redisCache.getValue(CACHE_KEY_BOOK_CATEGROUY_COUNT,List.class);
         if(null == categrouyCount){
             //规避缓存获得不到数据，一下子全部怼到数据库压力太大，增加同步控制
-            synchronized (lock){
+            synchronized (cacheKeyLock){
                 categrouyCount = bookCategrouyCountServer.getCategrouyCount();
                 redisCache.setValue(CACHE_KEY_BOOK_CATEGROUY_COUNT,categrouyCount,5*60);
             }
@@ -80,7 +80,7 @@ public class CacheBreakDownController {
         categrouyCount = redisCache.getValue(CACHE_KEY_BOOK_CATEGROUY_COUNT,List.class);
         if(null == categrouyCount){
             //规避缓存获得不到数据，一下子全部怼到数据库压力太大，增加同步控制
-            synchronized (this){
+            synchronized (cacheKeyLock){
                 //同步代码中再次获取缓存数据，可以使用同步时候第一个线程放入缓存的结果，规避大量线程怼到数据库层面
                 categrouyCount = redisCache.getValue(CACHE_KEY_BOOK_CATEGROUY_COUNT,List.class);
                 if(null != categrouyCount){
