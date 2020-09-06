@@ -65,7 +65,7 @@
 
 	<modules>
 		<module>Jdk7GC</module>
-		<module>SpringCyclicDependence</module>
+		<module>OOM_Java_Heap_Space</module>
 		<module>JdkKnowledge</module>
 		<module>OfficeWordExcel</module>
 		<module>CacheBreakdown</module>
