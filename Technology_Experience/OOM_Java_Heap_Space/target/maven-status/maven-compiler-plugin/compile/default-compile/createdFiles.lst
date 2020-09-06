@@ -1,6 +1,0 @@
-com\cloud\practice\springboot\demo\core\InitBeanToSpringContext.class
-com\cloud\practice\springboot\demo\pojo\OrderDemo.class
-com\cloud\practice\springboot\demo\core\CSRestTemplateUtils.class
-com\cloud\practice\springboot\demo\core\HoldThread.class
-com\cloud\practice\springboot\demo\web\RestApiSupportController.class
-com\cloud\practice\springboot\demo\OOMJavaHeapSpace.class

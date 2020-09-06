@@ -1,0 +1,22 @@
+HELP.md
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+.idea
+*.iml
+.mvn
+out
+gen
+*.class
+*target
+mvnw
+mvnw.cmd
+maven-wrapper.jar
+maven-wrapper.properties
+/CacheBreakdown.log.2020-02-24.0.gz
