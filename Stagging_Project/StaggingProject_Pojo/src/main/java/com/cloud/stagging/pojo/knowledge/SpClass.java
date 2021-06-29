@@ -1,5 +1,6 @@
 package com.cloud.stagging.pojo.knowledge;
 
+import com.cloud.stagging.enums.knowledge.ClassTypeEnum;
 import lombok.Data;
 
 /**
@@ -15,4 +16,6 @@ public class SpClass {
     /** 分类名称 */
     private String className;
 
+    /** 分类类型:QA_CLASS问题分类;MATERIAL_CLASS素材分类 */
+    private ClassTypeEnum classType ;
 }

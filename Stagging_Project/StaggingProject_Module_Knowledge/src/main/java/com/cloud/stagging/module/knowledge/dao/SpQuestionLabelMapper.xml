@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cloud.stagging.module.knowledge.dao.SpQuestionLabelMapper" >
-  <resultMap id="BaseResultMap" type="com.cloud.stagging.pojo.knowledge.SpQuestionLabel" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="label_id" property="labelId" jdbcType="INTEGER" />
-    <result column="question_id" property="questionId" jdbcType="INTEGER" />
-  </resultMap>
+
   <sql id="Base_Column_List" >
     id, label_id, question_id
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+
+  <select id="selectByPrimaryKey" resultType="com.cloud.stagging.pojo.knowledge.SpQuestionLabel" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from sp_knowledge_label
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sp_knowledge_label
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.cloud.stagging.pojo.knowledge.SpQuestionLabel" >
     insert into sp_knowledge_label (id, label_id, question_id
       )
     values (#{id,jdbcType=INTEGER}, #{labelId,jdbcType=INTEGER}, #{questionId,jdbcType=INTEGER}
       )
   </insert>
+
   <insert id="insertSelective" parameterType="com.cloud.stagging.pojo.knowledge.SpQuestionLabel" >
     insert into sp_knowledge_label
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -50,6 +50,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.cloud.stagging.pojo.knowledge.SpQuestionLabel" >
     update sp_knowledge_label
     <set >
@@ -62,6 +63,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.cloud.stagging.pojo.knowledge.SpQuestionLabel" >
     update sp_knowledge_label
     set label_id = #{labelId,jdbcType=INTEGER},

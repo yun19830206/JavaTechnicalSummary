@@ -2,7 +2,7 @@ package com.cloud.stagging.core.cache.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cloud.stagging.core.cache.ICacheInterface;
-import com.cloud.stagging.pojo.user.User;
+import com.cloud.stagging.core.web.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;

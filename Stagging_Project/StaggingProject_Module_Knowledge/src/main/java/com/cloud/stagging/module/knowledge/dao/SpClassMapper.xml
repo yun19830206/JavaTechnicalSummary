@@ -1,58 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cloud.stagging.module.knowledge.dao.SpClassMapper" >
-  <resultMap id="BaseResultMap" type="com.cloud.stagging.pojo.knowledge.SpClass" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="class_name" property="className" jdbcType="VARCHAR" />
-  </resultMap>
+
   <sql id="Base_Column_List" >
-    id, class_name
+    id, class_name, class_type
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+
+  <select id="selectByPrimaryKey" resultType="com.cloud.stagging.pojo.knowledge.SpClass" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List" />
+      <include refid="Base_Column_List" />
     from sp_class
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sp_class
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cloud.stagging.pojo.knowledge.SpClass" >
-    insert into sp_class (id, class_name)
-    values (#{id,jdbcType=INTEGER}, #{className,jdbcType=VARCHAR})
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.cloud.stagging.pojo.knowledge.SpClass" >
+    insert into sp_class (id, class_name, class_type)
+    values (#{id,jdbcType=INTEGER}, #{className,jdbcType=VARCHAR}, #{classType,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.cloud.stagging.pojo.knowledge.SpClass" >
-    insert into sp_class
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="className != null" >
-        class_name,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="className != null" >
-        #{className,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.cloud.stagging.pojo.knowledge.SpClass" >
     update sp_class
     <set >
       <if test="className != null" >
         class_name = #{className,jdbcType=VARCHAR},
       </if>
+      <if test="classType != null" >
+        class_name = #{classType,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.cloud.stagging.pojo.knowledge.SpClass" >
     update sp_class
-    set class_name = #{className,jdbcType=VARCHAR}
+    set class_name = #{className,jdbcType=VARCHAR},
+        class_type = #{classType,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

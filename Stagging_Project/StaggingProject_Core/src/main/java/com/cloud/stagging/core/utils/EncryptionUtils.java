@@ -12,7 +12,7 @@ public class EncryptionUtils {
     private EncryptionUtils(){}
 
     /**
-     * 对用户插入的参数密码进行MD5加密
+     * 对一个字符串进行MD5加密
      * @param originString
      * @return String
      * @throws Exception

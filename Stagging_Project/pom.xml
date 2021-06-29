@@ -55,6 +55,10 @@
 		<hanlp-version>portable-1.7.1</hanlp-version>
 		<lucense-hanlp-plugin-version>1.1.6</lucense-hanlp-plugin-version>
 
+		<!-- JWT相关版本 -->
+		<spring-security-jwt-version>1.0.9.RELEASE</spring-security-jwt-version>
+		<jsonwebtoken-version>0.9.0</jsonwebtoken-version>
+
 
 	</properties>
 
@@ -142,6 +146,19 @@
 				<artifactId>hanlp-lucene-plugin</artifactId>
 				<version>${lucense-hanlp-plugin-version}</version>
 			</dependency>
+
+			<!-- JWT依赖 -->
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-jwt</artifactId>
+				<version>${spring-security-jwt-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt</artifactId>
+				<version>${jsonwebtoken-version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -162,10 +179,20 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<!-- SpringSecurity -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
+		<!-- 查看服务状态 -->
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-actuator</artifactId>-->
+		<!--</dependency>-->
 
 		<!-- Mybatis -->
 		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
@@ -217,10 +244,25 @@
 			<artifactId>easyexcel</artifactId>
 		</dependency>
 
+		<!-- JWT依赖 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-jwt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 	</dependencies>

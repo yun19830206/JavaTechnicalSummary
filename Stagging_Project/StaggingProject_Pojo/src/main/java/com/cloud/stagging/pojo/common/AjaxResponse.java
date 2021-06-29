@@ -11,10 +11,11 @@ public class AjaxResponse<T> implements Serializable{
 
     private static final long serialVersionUID = -8037998058337071948L;
 
-    /** 状态码：200 业务成功， 500业务失败 */
+    /** 状态码：200 业务成功， 500业务失败, 403没有权限点 */
     private static final int CODE_SUCCESS = 200 ;
     private static final int CODE_ERROR = 500 ;
-    private static final int CODE_NO_LOGIN = 505 ;
+    private static final int CODE_NO_LOGIN = 401;
+    private static final int CODE_NO_AUTH = 403 ;
 
     /** 返回结果状态码， 200成功，500内部错误 */
     private int code ;
@@ -65,8 +66,12 @@ public class AjaxResponse<T> implements Serializable{
     }
 
     /** 没有登入 */
+    public static AjaxResponse noLogin() {
+        return new AjaxResponse<>(CODE_NO_LOGIN,null,"没有登入，请先登入",null);
+    }
+    /** 没有登入 */
     public static AjaxResponse noAuth() {
-        return new AjaxResponse<>(CODE_NO_LOGIN,null,"没有权限，请先登入",null);
+        return new AjaxResponse<>(CODE_NO_AUTH,null,"没有对应权限点，请先登入向管理员获得授权",null);
     }
 
 
@@ -93,5 +98,12 @@ public class AjaxResponse<T> implements Serializable{
         this.data = data;
     }
 
-
+    @Override
+    public String toString() {
+        return "AjaxResponse{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", debugMessage='" + debugMessage + '\'' +
+                '}';
+    }
 }

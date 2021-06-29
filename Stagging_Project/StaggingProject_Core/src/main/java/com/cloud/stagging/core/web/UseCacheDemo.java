@@ -2,7 +2,6 @@ package com.cloud.stagging.core.web;
 
 import com.cloud.stagging.core.cache.impl.RedisCacheImpl;
 import com.cloud.stagging.pojo.common.AjaxResponse;
-import com.cloud.stagging.pojo.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,9 @@
 package com.cloud.stagging.module.knowledge.dao;
 
 import com.cloud.stagging.pojo.knowledge.SpAnswer;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface SpAnswerMapper {
     int deleteByPrimaryKey(Integer id);
 

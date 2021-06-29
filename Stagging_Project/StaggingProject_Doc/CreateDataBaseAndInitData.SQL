@@ -1,13 +1,19 @@
 ######################创建脚手架工程数据库脚本#####################
-drop table sp_class ;
-drop table sp_label ;
-drop table sp_question ;
-drop table sp_answer ;
-drop table sp_knowledge_label ;
+drop table if exists sp_class ;
+drop table if exists sp_label ;
+drop table if exists sp_question ;
+drop table if exists sp_answer ;
+drop table if exists sp_knowledge_label ;
+DROP TABLE IF EXISTS auth_menufunction;
+DROP TABLE IF EXISTS auth_role;
+DROP TABLE IF EXISTS auth_role_menufunction;
+DROP TABLE IF EXISTS auth_user;
+DROP TABLE IF EXISTS auth_user_role;
 ##分类表
 CREATE TABLE sp_class (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID自增',
   class_name varchar(64) NOT NULL unique COMMENT '分类名称',
+  class_type varchar(16) DEFAULT NULL COMMENT '分类类型:QA_CLASS问题分类;MATERIAL_CLASS素材分类',
   PRIMARY KEY (id)
 ) COMMENT='分类表' ;
 ##标签表
@@ -22,7 +28,7 @@ CREATE TABLE sp_question (
   question varchar(256) DEFAULT '' COMMENT '问题描述',
   class_id int(11) NOT NULL COMMENT '分类ID',
   stand_question_id int(11) DEFAULT -1 COMMENT '标准问题ID',
-  question_type int(4) DEFAULT 100 COMMENT '问题类型:100=标准问题、200相似问法、300词条知识、400集合知识、500文档知识',
+  question_type int(4) DEFAULT 200 COMMENT '问题类型:200=标准问题、201相似问法、202词条知识、203集合知识、204文档知识',
   PRIMARY KEY (id)
 ) COMMENT='问题表';
 ##答案表
@@ -39,6 +45,7 @@ CREATE TABLE sp_knowledge_label (
   question_id  int(11) NOT NULL COMMENT '问题ID',
   PRIMARY KEY (id)
 ) COMMENT='标签表' ;
+
 
 
 
@@ -256,7 +263,7 @@ INSERT INTO sp_answer (`answer`, `question_id`)
   select CONCAT('标准答案:',a.question),a.id from sp_question a where a.stand_question_id=-1 ;
 INSERT INTO sp_knowledge_label (label_id, question_id)
   select b.id 'label_id',a.id 'question_id' from sp_question a, sp_label b where a.stand_question_id=-1 ;
-update sp_question set sp_question.question_type=100 where sp_question.stand_question_id=-1;
-update sp_question set sp_question.question_type=200 where sp_question.stand_question_id!=-1;
-update sp_question set sp_question.question_type=300 where sp_question.id=6208;
-update sp_question set sp_question.question_type=500 where sp_question.id=6209;
+update sp_question set sp_question.question_type=200 where sp_question.stand_question_id=-1;
+update sp_question set sp_question.question_type=201 where sp_question.stand_question_id!=-1;
+update sp_question set sp_question.question_type=202 where sp_question.id=6208;
+update sp_question set sp_question.question_type=204 where sp_question.id=6209;

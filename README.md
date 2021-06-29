@@ -5,6 +5,6 @@
 
 
 # 仓库中每个独立子工程的作用说明：
-  1. Rd_Standard---为技术管理者提供可落地、可量化、受限域的研发规范
+  1. Stagging_Project---一般通用型项目的脚手架工程(带示例业务场景)
   2. Design_Pattern---提供带可落地业务场景的设计模式示例
   3. Technology_Experience---独立工程可以复现问题的方式 详细讲解Java相关领域的技术点(此为POM工程)

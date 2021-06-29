@@ -11,5 +11,13 @@
 
     <artifactId>stagging-project-web-job</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.cloud.stagging</groupId>
+            <artifactId>stagging-project-module-knowledge</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
 
 </project>

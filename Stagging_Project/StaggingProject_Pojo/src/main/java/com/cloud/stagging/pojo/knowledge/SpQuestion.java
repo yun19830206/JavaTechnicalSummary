@@ -21,7 +21,7 @@ public class SpQuestion {
     /** 归属标准问题ID */
     private Integer standQuestionId;
 
-    /** 问题类型:100=标准问题、200相似问法、300词条知识、400集合知识、500文档知识 */
+    /** 问题类型:200=标准问题、201相似问法、202词条知识、203集合知识、204文档知识 */
     private Integer questionType;
 
 }

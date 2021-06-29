@@ -15,7 +15,12 @@
 
         <dependency>
             <groupId>com.cloud.stagging</groupId>
-            <artifactId>stagging-project-business-module</artifactId>
+            <artifactId>stagging-project-module-knowledge</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cloud.stagging</groupId>
+            <artifactId>stagging-project-web-job</artifactId>
             <version>1.0</version>
         </dependency>
 
