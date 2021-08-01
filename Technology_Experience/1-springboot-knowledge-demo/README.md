@@ -4,23 +4,72 @@
 # 日志相关配置
 > 见application.properties中《日志相关配置》章节
 
+# 打出Jar包大小说明
+> 如果工程的parent为标准SpringBoot,采用如下打包即可是整个打包
+```javascript
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.3.2.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+</parent>
+<build>
+    <plugins>
+    	<plugin>
+            <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
+```
+>如果工程的parent不是标准SpringBoot,采用如下打包即可是整个打包
+```javascript
+<parent>
+    <groupId>com.cloud.cheng.spring.cloud.dubbo.sample</groupId>
+    <artifactId>spring-cloud-dubbo-sample</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</parent>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+                <layout>ZIP</layout>
+                <mainClass>com.cloud.cheng.SpringCloudDubboSampleProviderApplication</mainClass>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+# 不同环境配置文件使用说明
+> 为了解决不同环境下服务连接配置等消息的差异，SpringBoot还提供了在启动参数基于spring.profiles.active={profile}的机制来实现不同环境的切换，profile就代表不同环境的篇日志文件。如：application-dev.properties,application-test.properties
 
 
 
 
 # SpringBoot的actuator监控(需要根据极客时间视屏中内容进行修改)
 > * 引入Java包如下：
-> * `<dependency>
-         <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-starter-actuator</artifactId>
-     </dependency>`
+```javascript
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
 > * 配置文件中增加无需登入鉴权：management.security.enabled=false
 > * 可以使用get请求地址查看默认监控信息(health)：http://localhost:8080/actuator
 > * 配置文件中增加更多监控信息配置：management.endpoints.web.exposure.include=*
 > * 全量监控信息地址如下：http://localhost:8080/actuator/mappings(更多在actuator地址的结果中有href)
 安全建议
 针对 Spring Boot Actuator 提供的 endpoint，采取以下几种措施，可以尽可能降低被安全攻击的风险
-
 最小粒度暴露 endpoint。只开启并暴露真正用到的 endpoint，而不是配置：management.endpoints.web.exposure.include=*。
 为 endpoint 配置独立的访问端口，从而和 web 服务的端口分离开，避免暴露 web 服务时，误将 actuator 的 endpoint 也暴露出去。例：management.port=8099。
 引入 spring-boot-starter-security 依赖，为 actuator 的 endpoint 配置访问控制。
