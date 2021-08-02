@@ -43,7 +43,7 @@
 		<pageHelper-springboot-starter-version>1.2.10</pageHelper-springboot-starter-version>
 
 		<!-- Apache commons-io 使用文件处理部分 -->
-		<commons-io-version>2.6</commons-io-version>
+		<commons-io-version>2.7</commons-io-version>
 
 		<!-- lombok简洁代码 -->
 		<lombok-verison>1.18.4</lombok-verison>
